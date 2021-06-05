@@ -28,6 +28,7 @@ library
       Lib
       Rnd
       Shares
+      SharesModel
   other-modules:
       Paths_shares
   hs-source-dirs:
