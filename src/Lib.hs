@@ -6,24 +6,42 @@ import Rnd
 import Data.List
 import Data.Foldable
 
+--riskFreeRate = 0.021
+peRatio = 21.7
+
+
+capMln = 4513
+sharesCountMln = 743.41
+cash = 774
+revenue0 = 1600
+future = [
+   {-2021-}   ((-0.5) ..< (-0.22), 0.0 ..< 0.12)
+   {-2022-} , (0.20 <..> (0.0, 0.60), 0.05 ..< 0.20)
+   {-2023-} , (0.10 ..< 0.25, 0.10 ..< 0.25)
+   {-2024-} , (0.00 ..< 0.25, 0.10 ..< 0.25)
+   {-2025-} , ((-0.10) ..< 0.20, 0.10 ..< 0.25)
+  ]
 
 someFunc :: IO ()
 --someFunc = print $ test
 someFunc =  do
-  print $ snd simulation
+  putStrLn $ "Share price    = " ++ show (snd simulation |*| (1/sharesCountMln))
+  putStrLn $ "Current price  = " ++ show (capMln/sharesCountMln)
+  putStrLn $ "Capitalisation = " ++ show (snd simulation)
   foldlM printYear 2021 (fst simulation)
   return ()
---  print $ simulateMmm 10000 0.95 $ intrinsicValue 0.021 $ earnings
+--  putStrLn $ simulateMmm 10000 0.95 $ intrinsicValue 0.021 $ earnings
   where
     printYear :: Int -> (MeanMinMax, MeanMinMax) -> IO Int
     printYear year (rev, earn) =
       do
-        print $ "# " ++ show year
-        print $ "Revenue  = " ++ show rev
-        print $ "Earnings = " ++ show earn
+        putStrLn $ "# " ++ show year
+        putStrLn $ "Revenue  = " ++ show rev
+        putStrLn $ "Earnings = " ++ show earn
+        putStrLn $ "Margin   = " ++ show (rev
         return $ year + 1
 
---someFunc = print $ simulateMmm 10000 0.95 $ intrinsicValue 0.021 $ (10, random (2000 ..< 3000))
+--someFunc = putStrLn $ simulateMmm 10000 0.95 $ intrinsicValue 0.021 $ (10, random (2000 ..< 3000))
 
 --someFunc = print $ intrinsicValue 0.021 10 2706
 
@@ -46,15 +64,6 @@ calc = do
   let ev = cash + (intrinsicValue (1/peRatio) (map earnings es))
   return $ (es, ev)
 
-
-riskFreeRate = 0.021
-peRatio = 21.7
-cash = 774
 simEarnings :: (Int, Rnd [RevEarn])
-simEarnings = calcEarnings 1600 [ 
-    {-2021-}   ((-0.5) ..< (-0.22), 0.0 ..< 0.12) 
-    {-2022-} , (0.20 <..> (0.0, 0.60), 0.05 ..< 0.20)
-    {-2023-} , (0.10 ..< 0.25, 0.10 ..< 0.25)
-    {-2024-} , (0.00 ..< 0.30, 0.10 ..< 0.25)
-    {-2025-} , ((-0.10) ..< 0.30, 0.10 ..< 0.25)
-  ]
+simEarnings = calcEarnings revenue0 future
+

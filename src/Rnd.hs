@@ -1,4 +1,4 @@
-module Rnd (Distribution(random), N, normalize, denormalize, Rnd, (..<), (<..>), runRnd, simulate, minMeanMaxN, mkN,
+module Rnd (Distribution(random), N, normalize, denormalize, Rnd, (..<), (<..>), (|*|), runRnd, simulate, minMeanMaxN, mkN,
   simulateN, simulateMmm, MeanMinMax, scanM, withConfidence, mkMeanMinMax) where
 
 
@@ -6,6 +6,7 @@ import Data.Random.Normal
 import Control.Monad.State
 import System.Random
 import Data.List
+import Numeric
 
 type Rnd = State StdGen
 
@@ -17,10 +18,12 @@ data N = N Double Double deriving (Show)
 data MeanMinMax = MeanMinMax Double Double Double
 
 instance Show MeanMinMax where
-    show (MeanMinMax mean min max) = show mean ++ " (" ++ show min ++ " .. " ++ show max ++ ")"
+    show (MeanMinMax mean min max) = showD 2 mean ++ " (" ++ showD 2 min ++ " .. " ++ showD 2 max ++ ")"
 
 instance Distribution N where
    random n = fmap (denormalize n) $ state normal
+
+(MeanMinMax mean min max) |*| v = MeanMinMax (mean*v) (min*v) (max*v)
 
 normalize :: N -> Double -> Double
 normalize (N mean std) v = (v - mean)/std
@@ -75,3 +78,5 @@ scanM f q (x:xs) =
     q2 <- f q x
     qs <- scanM f q2 xs
     return (q:qs)
+
+showD numOfDecimals floatNum = showFFloat (Just numOfDecimals) floatNum ""

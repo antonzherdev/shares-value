@@ -5,7 +5,7 @@ import Data.Foldable
 
 
 intrinsicValue :: Double -> [Double] -> Double
-intrinsicValue p earnings = es / ( (1 + p) ^ years - 1)
+intrinsicValue p earnings = (es + (last earnings)/p) / ( (1 + p) ^ years)
   where
     es = sum earnings
     years = length earnings
