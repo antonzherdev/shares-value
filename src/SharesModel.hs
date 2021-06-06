@@ -3,7 +3,7 @@ module SharesModel (FinParam(..), Stock(..), StockYear(..), RevEarn(..), revGrow
 import Rnd
 
 data FinParam = FinParam {
-    riskFreeRate :: Double,
+    gdpGrowth :: Double,
     marketPeRatio :: Double
   } deriving (Show)
 
@@ -11,6 +11,7 @@ data Stock = Stock {
     stockName :: String,
     stockCash :: Double,
     stockRevenue :: Double,
+    stockEarnings :: Double,
     stockCapMln :: Double,
     stockShareCountMln :: Double,
     stockFuture :: [StockYear]

@@ -1,15 +1,21 @@
-module Shares (intrinsicValue, calcEarnings, stockSimulation) where
+module Shares (intrinsicValue, calcEarnings, stockSimulation, expectedInterest) where
 
 import Rnd
 import SharesModel
 import qualified Data.List as List
+--import Debug.Trace(traceShowId)
 
-intrinsicValue :: Double -> [Double] -> Double
-intrinsicValue p earnings = (es + last earnings/p) / ( (1 + p) ^ years)
+intrinsicValue :: FinParam -> Stock -> [Double] -> Double
+--intrinsicValue p earnings = (es + last earnings/p) / ( (1 + p) ^ years)
+intrinsicValue FinParam{gdpGrowth=gg, marketPeRatio=pe} Stock{stockEarnings = e0} es =
+  (e0 + earningsGrowthOverInflation) * pe -- +  / ( (1 + 1/pe) ^ years)
   where
-    es = sum earnings
-    years = length earnings
+    years = length es
+    cpiEarnings = ((e0 * (1 + gg) + e0 * (1 + gg) ^ years)/2) * fromIntegral years
+    earningsGrowthOverInflation = sum es - cpiEarnings
 
+expectedInterest :: FinParam -> Double
+expectedInterest FinParam{gdpGrowth=gg, marketPeRatio=pe} = gg + (1 + gg)/pe
 
 revEarn :: Double -> StockYear -> Rnd RevEarn
 revEarn revenue0 (StockYear _ grow mrg) =
@@ -25,14 +31,14 @@ calcEarnings revenue0 years = tail <$> scanM f (RevEarn revenue0 0) years
     f (RevEarn r _) i = revEarn r i
 
 calcStock :: FinParam -> Stock -> Rnd ([RevEarn], Double)
-calcStock FinParam{riskFreeRate = g, marketPeRatio = peRatio} Stock{stockCash = cash, stockFuture = fut, stockRevenue = revenue} = do
+calcStock param stock@Stock{stockCash = cash, stockFuture = fut, stockRevenue = revenue} = do
   es <- calcEarnings revenue fut
-  let ev = cash + intrinsicValue (1/peRatio + g) (map reEarnings es)
+  let ev = cash + intrinsicValue param stock (map reEarnings es)
   return (es, ev)
 
 
 simulations :: FinParam -> Stock -> [([RevEarn], Double)]
-simulations param stock = simulate 10000 $ calcStock param stock
+simulations param stock = simulate 1 $ calcStock param stock
 
 
 stockSimulation :: Double -> FinParam -> Stock -> ([(MeanMinMax, MeanMinMax)], MeanMinMax)
