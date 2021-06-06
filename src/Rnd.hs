@@ -1,6 +1,6 @@
-module Rnd (Distribution(random), N, normalize, denormalize, Rnd, minMax95, minMax99, meanMinMax95, meanMinMax99,
+module Rnd (Distribution(random), N(..), normalize, denormalize, Rnd, minMax95, minMax99, meanMinMax95, meanMinMax99,
   (|*|), runRnd, simulate, mkN95,
-  simulateN, simulateMmm, MeanMinMax, scanM, withConfidence, mkMeanMinMax) where
+  simulateN, simulateMmm, MeanMinMax, scanM, withConfidence, mkMeanMinMax, showD) where
 
 
 import Data.Random.Normal
@@ -84,7 +84,6 @@ simulateMmm times confidence r = mkMeanMinMax $ withConfidence confidence $ simu
 
 runRnd :: Int -> Rnd a -> a
 runRnd seed r = evalState r (mkStdGen seed)
-
 
 scanM :: (Monad m) => (a -> b -> m a) -> a -> [b] -> m [a]
 scanM _ q [] = return [q]

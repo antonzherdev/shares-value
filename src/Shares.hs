@@ -12,10 +12,10 @@ intrinsicValue p earnings = (es + last earnings/p) / ( (1 + p) ^ years)
 
 
 revEarn :: Double -> StockYear -> Rnd RevEarn
-revEarn revenue0 (StockYear _ grow margin) =
+revEarn revenue0 (StockYear _ grow mrg) =
   do
     g <- random grow
-    m <- random margin
+    m <- random mrg
     let revenue = revenue0 * (1 + g)
     return $ RevEarn revenue (revenue*m)
 
@@ -25,9 +25,9 @@ calcEarnings revenue0 years = tail <$> scanM f (RevEarn revenue0 0) years
     f (RevEarn r _) i = revEarn r i
 
 calcStock :: FinParam -> Stock -> Rnd ([RevEarn], Double)
-calcStock FinParam{marketPeRatio = peRatio} Stock{stockCash = cash, stockFuture = fut, stockRevenue = revenue} = do
+calcStock FinParam{riskFreeRate = g, marketPeRatio = peRatio} Stock{stockCash = cash, stockFuture = fut, stockRevenue = revenue} = do
   es <- calcEarnings revenue fut
-  let ev = cash + intrinsicValue (1/peRatio) (map reEarnings es)
+  let ev = cash + intrinsicValue (1/peRatio + g) (map reEarnings es)
   return (es, ev)
 
 

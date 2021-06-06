@@ -29,12 +29,14 @@ library
       Rnd
       Shares
       SharesModel
+      Stocks
   other-modules:
       Paths_shares
   hs-source-dirs:
       src
   build-depends:
       base >=4.7 && <5
+    , containers
     , mtl
     , normaldistribution
     , random

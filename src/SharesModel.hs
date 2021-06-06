@@ -8,6 +8,7 @@ data FinParam = FinParam {
   } deriving (Show)
 
 data Stock = Stock {
+    stockName :: String,
     stockCash :: Double,
     stockRevenue :: Double,
     stockCapMln :: Double,
