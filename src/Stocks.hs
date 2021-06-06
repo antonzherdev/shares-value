@@ -1,4 +1,4 @@
-module Stocks(finParam, stock, stocks) where
+module Stocks(finParam, stock, stocks, defaultStock) where
 
 import SharesModel
 import Rnd
@@ -13,6 +13,9 @@ finParam = FinParam {
 
 stock :: String -> Stock
 stock = (!) stocks
+
+defaultStock :: String
+defaultStock = "fphealth"
 
 stocks :: Map String Stock
 stocks = Map.fromList $ map (\s -> (stockName s, s)) [
@@ -45,7 +48,21 @@ stocks = Map.fromList $ map (\s -> (stockName s, s)) [
          , 2024 `revGrowth` ((-0.10)  `minMax95`  0.15)  `margin` (0.05 `minMax95` 0.14)
          , 2025 `revGrowth` ((-0.10) `minMax95`   0.15)  `margin` (0.05 `minMax95` 0.14)
         ]
-    }
+    }, Stock {
+         stockName = "fphealth" {- Fisher & Paykel health -}
+       , stockCapMln = 16714
+       , stockShareCountMln = 576.34
+       , stockCash = 882 - 76
+       , stockRevenue = 1971.2
+       , stockEarnings = 524.2
+       , stockFuture = [
+            2021 `revGrowth` ((-0.50) `minMax95` (-0.10)) `margin` (0.15 `minMax95` 0.30)
+          , 2022 `revGrowth` (  0.05  `minMax95`   0.25)  `margin` (0.15 `minMax95` 0.30)
+          , 2023 `revGrowth` (  0.00  `minMax95`   0.25)  `margin` (0.15 `minMax95` 0.30)
+          , 2024 `revGrowth` (  0.00  `minMax95`   0.25)  `margin` (0.15 `minMax95` 0.30)
+          , 2025 `revGrowth` (  0.00  `minMax95`   0.25)  `margin` (0.15 `minMax95` 0.30)
+         ]
+     }
   ]
 
 -- stock price should be equal to pe ratio if stock growth with inflation rate
