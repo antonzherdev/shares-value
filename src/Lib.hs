@@ -12,16 +12,20 @@ import Data.Foldable
 
 
 someFunc :: IO ()
---someFunc = procStock $ stock "stable"
-someFunc = print $ expectedInterest finParam
+someFunc = procStock $ stock "a2milk"
+--someFunc = print $ expectedInterest finParam
 
 procStock :: Stock -> IO ()
 procStock s@Stock{stockShareCountMln = sharesCountMln, stockCapMln = capMln} =  do
+  putStrLn $ "Market interest = " ++ showD 4 (100*expectedInterest finParam) ++ "%"
+  putStrLn "---------------------------------------------------------"
+  _ <- foldlM printYear 2021 (fst sm)
+  putStrLn "---------------------------------------------------------"
   putStrLn $ "Share price    = " ++ show (snd sm |*| (1/sharesCountMln))
   putStrLn $ "Current price  = " ++ showD 2 (capMln/sharesCountMln)
   putStrLn $ "Capitalisation = " ++ show (snd sm)
   putStrLn $ "Current cap    = " ++ showD 2 capMln
-  _ <- foldlM printYear 2021 (fst sm)
+  
   return ()
 --  putStrLn $ simulateMmm 10000 0.95 $ intrinsicValue 0.021 $ earnings
   where

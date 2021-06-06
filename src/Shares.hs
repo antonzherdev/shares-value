@@ -7,15 +7,15 @@ import qualified Data.List as List
 
 intrinsicValue :: FinParam -> Stock -> [Double] -> Double
 --intrinsicValue p earnings = (es + last earnings/p) / ( (1 + p) ^ years)
-intrinsicValue FinParam{gdpGrowth=gg, marketPeRatio=pe} Stock{stockEarnings = e0} es =
-  (e0 + earningsGrowthOverInflation) * pe -- +  / ( (1 + 1/pe) ^ years)
+intrinsicValue FinParam{gdpGrowth=gdp, marketPeRatio=pe} _ es =
+  (en*pe + sum es) / int
   where
-    years = length es
-    cpiEarnings = ((e0 * (1 + gg) + e0 * (1 + gg) ^ years)/2) * fromIntegral years
-    earningsGrowthOverInflation = sum es - cpiEarnings
+    n = length es
+    en = last es
+    int = (1 + gdp)^n + ((1 + gdp) + (1 + gdp)^n)* fromIntegral n /(2*pe)
 
 expectedInterest :: FinParam -> Double
-expectedInterest FinParam{gdpGrowth=gg, marketPeRatio=pe} = gg + (1 + gg)/pe
+expectedInterest FinParam{gdpGrowth=gdp, marketPeRatio=pe} = (1 + gdp)*(1 + 1/pe) - 1
 
 revEarn :: Double -> StockYear -> Rnd RevEarn
 revEarn revenue0 (StockYear _ grow mrg) =
@@ -38,7 +38,7 @@ calcStock param stock@Stock{stockCash = cash, stockFuture = fut, stockRevenue = 
 
 
 simulations :: FinParam -> Stock -> [([RevEarn], Double)]
-simulations param stock = simulate 1 $ calcStock param stock
+simulations param stock = simulate 10000 $ calcStock param stock
 
 
 stockSimulation :: Double -> FinParam -> Stock -> ([(MeanMinMax, MeanMinMax)], MeanMinMax)

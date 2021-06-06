@@ -47,9 +47,8 @@ stableStock = Stock {
          2021 `revGrowth` sre `margin` smr
        , 2022 `revGrowth` sre `margin` smr
        , 2025 `revGrowth` sre `margin` smr
---       , 2023 `revGrowth` sre `margin` smr
---       , 2024 `revGrowth` sre `margin` smr
---       , 2024 `revGrowth` sre `margin` smr
+       , 2023 `revGrowth` sre `margin` smr
+       , 2024 `revGrowth` sre `margin` smr
       ]
   } where
     mar = 0.1
