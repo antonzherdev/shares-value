@@ -7,7 +7,7 @@ import qualified Data.Map as Map
 
 finParam :: FinParam
 finParam = FinParam {
-      gdpGrowth = 0.021
+      gdpGrowth = 0.028
     , marketPeRatio = 21.7
   }
 
@@ -30,6 +30,20 @@ stocks = Map.fromList $ map (\s -> (stockName s, s)) [
          , 2023 `revGrowth` (  0.10  `minMax95`   0.25)  `margin` (0.10 `minMax95` 0.25)
          , 2024 `revGrowth` (  0.00  `minMax95`   0.25)  `margin` (0.10 `minMax95` 0.25)
          , 2025 `revGrowth` ((-0.10) `minMax95`   0.25)  `margin` (0.10 `minMax95` 0.25)
+        ]
+    }, Stock {
+        stockName = "foley"
+      , stockCapMln = 113
+      , stockShareCountMln = 65.74
+      , stockCash = 113 - 48
+      , stockRevenue = 50.23
+      , stockEarnings = 6.76
+      , stockFuture = [
+           2021 `revGrowth` ((-0.12) `minMax95` (-0.05)) `margin` (0.03 `minMax95` 0.10)
+         , 2022 `revGrowth` (  0.05  `minMax95`   0.15)  `margin` (0.05 `minMax95` 0.14)
+         , 2023 `revGrowth` (  0.00  `minMax95`   0.15)  `margin` (0.05 `minMax95` 0.14)
+         , 2024 `revGrowth` ((-0.10)  `minMax95`  0.15)  `margin` (0.05 `minMax95` 0.14)
+         , 2025 `revGrowth` ((-0.10) `minMax95`   0.15)  `margin` (0.05 `minMax95` 0.14)
         ]
     }
   ]

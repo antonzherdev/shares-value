@@ -12,7 +12,7 @@ import Data.Foldable
 
 
 someFunc :: IO ()
-someFunc = procStock $ stock "a2milk"
+someFunc = procStock $ stock "foley"
 --someFunc = print $ expectedInterest finParam
 
 procStock :: Stock -> IO ()
