@@ -12,7 +12,7 @@ intrinsicValue p earnings = (es + last earnings/p) / ( (1 + p) ^ years)
 
 
 revEarn :: Double -> StockYear -> Rnd RevEarn
-revEarn revenue0 (StockYear grow margin) =
+revEarn revenue0 (StockYear _ grow margin) =
   do
     g <- random grow
     m <- random margin

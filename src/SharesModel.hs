@@ -1,4 +1,4 @@
-module SharesModel (FinParam(..), Stock(..), StockYear(..), RevEarn(..)) where
+module SharesModel (FinParam(..), Stock(..), StockYear(..), RevEarn(..), revGrowth, margin) where
 
 import Rnd
 
@@ -16,9 +16,16 @@ data Stock = Stock {
   } deriving (Show)
 
 data StockYear = StockYear {
+    year :: Int,
     yearRevenueGrowth :: N,
     yearMargin :: N
   } deriving (Show)
+
+revGrowth :: Int -> N -> N -> StockYear
+revGrowth = StockYear
+
+margin :: (N -> StockYear) -> N -> StockYear
+margin f = f
 
 data RevEarn = RevEarn {
     reRevenue :: Double,

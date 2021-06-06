@@ -22,11 +22,11 @@ a2milk = Stock {
     , stockCash = 774
     , stockRevenue = 1600
     , stockFuture = [
-       {-2021-}   StockYear ((-0.5) ..< (-0.22)) (0.0 ..< 0.12)
-       {-2022-} , StockYear (0.20 <..> (0.0, 0.60)) (0.05 ..< 0.20)
-       {-2023-} , StockYear (0.10 ..< 0.25) (0.10 ..< 0.25)
-       {-2024-} , StockYear (0.00 ..< 0.25) (0.10 ..< 0.25)
-       {-2025-} , StockYear ((-0.10) ..< 0.20) (0.10 ..< 0.25)
+         2021 `revGrowth` ((-0.50) `minMax95` (-0.22)) `margin` (0.0 `minMax95` 0.12)
+       , 2022 `revGrowth` meanMinMax95 0.20 0.0 0.60   `margin` (0.05 `minMax95` 0.20)
+       , 2023 `revGrowth` (  0.10  `minMax95`   0.25)  `margin` (0.10 `minMax95` 0.25)
+       , 2024 `revGrowth` (  0.00  `minMax95`   0.25)  `margin` (0.10 `minMax95` 0.25)
+       , 2025 `revGrowth` ((-0.10) `minMax95`   0.25)  `margin` (0.10 `minMax95` 0.25)
       ]
   }
 

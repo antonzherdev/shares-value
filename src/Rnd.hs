@@ -1,4 +1,5 @@
-module Rnd (Distribution(random), N, normalize, denormalize, Rnd, (..<), (<..>), (|*|), runRnd, simulate, minMeanMaxN, mkN,
+module Rnd (Distribution(random), N, normalize, denormalize, Rnd, minMax95, minMax99, meanMinMax95, meanMinMax99,
+  (|*|), runRnd, simulate, mkN95,
   simulateN, simulateMmm, MeanMinMax, scanM, withConfidence, mkMeanMinMax) where
 
 
@@ -32,22 +33,35 @@ normalize (N mean std) v = (v - mean)/std
 denormalize :: N -> Double -> Double
 denormalize (N mean std) v = v*std + mean
 
-(..<) :: Double -> Double -> N
-pMin ..< pMax = N mean std where
+minMax95 :: Double -> Double -> N
+minMax95 pMin pMax = N mean std where
   mean = (pMax + pMin)/2
   std = (pMax - pMin)/4
 
-minMeanMaxN :: MeanMinMax -> N
-minMeanMaxN (MeanMinMax mean pMin pMax) = N mean1 std where
+minMax99 :: Double -> Double -> N
+minMax99 pMin pMax = N mean std where
+  mean = (pMax + pMin)/2
+  std = (pMax - pMin)/6
+
+meanMinMax95N :: MeanMinMax -> N
+meanMinMax95N (MeanMinMax mean pMin pMax) = N mean1 std where
   mean1 = (pMax + 4*mean + pMin)/6
   std = (pMax - pMin)/4
 
-(<..>) :: Double -> (Double, Double) -> N
-mean <..> (pMin, pMax) = minMeanMaxN $ MeanMinMax mean pMin pMax
+meanMinMax95 :: Double -> Double -> Double -> N
+meanMinMax95 mean pMin pMax = meanMinMax95N $ MeanMinMax mean pMin pMax
 
-mkN :: [Double] -> N
-mkN [] = N 0 1
-mkN xs = minMeanMaxN $ mkMeanMinMax $ withConfidence 0.997 xs
+meanMinMax99N :: MeanMinMax -> N
+meanMinMax99N (MeanMinMax mean pMin pMax) = N mean1 std where
+  mean1 = (pMax + 4*mean + pMin)/6
+  std = (pMax - pMin)/6
+
+meanMinMax99 :: Double -> Double -> Double -> N
+meanMinMax99 mean pMin pMax = meanMinMax99N $ MeanMinMax mean pMin pMax
+
+mkN95 :: [Double] -> N
+mkN95 [] = N 0 1
+mkN95 xs = meanMinMax95N $ mkMeanMinMax $ withConfidence 0.997 xs
 
 withConfidence :: Double -> [Double] -> [Double]
 withConfidence confidence xs = if d == 0 then xs else take (len - 2*d) $ drop d $ List.sort xs
@@ -60,10 +74,10 @@ mkMeanMinMax xs = MeanMinMax (sum xs / fromIntegral (length xs) ) (minimum xs) (
 
 simulate :: Int -> Rnd a -> [a]
 simulate 0 _ = []
-simulate times r = runRnd times r : simulate (times - 1) r 
+simulate times r = runRnd times r : simulate (times - 1) r
 
 simulateN :: Int -> Rnd Double -> N
-simulateN times r = mkN $ simulate times r
+simulateN times r = mkN95 $ simulate times r
 
 simulateMmm :: Int -> Double -> Rnd Double -> MeanMinMax
 simulateMmm times confidence r = mkMeanMinMax $ withConfidence confidence $ simulate times r
