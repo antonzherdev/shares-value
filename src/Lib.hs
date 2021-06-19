@@ -7,13 +7,17 @@ import Stocks
 import SharesModel
 import Rnd
 import Data.Foldable
+import System.Environment
 
 --riskFreeRate = 0.021
 
 
 someFunc :: IO ()
-someFunc = stock defaultStock >>= procStock
---someFunc = print $ expectedInterest finParam
+someFunc = do
+  args <- getArgs
+  s <- stock $ head args 
+  procStock s
+
 
 procStock :: Stock -> IO ()
 procStock s@Stock{stockShareCountMln = sharesCountMln, stockCapMln = capMln} =  do

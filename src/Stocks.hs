@@ -1,4 +1,4 @@
-module Stocks(finParam, stock, stocks, defaultStock) where
+module Stocks(finParam, stock, stocks) where
 
 import SharesModel
 import Rnd
@@ -10,10 +10,7 @@ finParam = FinParam {
       gdpGrowth = 0.028
     , marketPeRatio = 21.7
   }
-
-defaultStock :: String
-defaultStock = "FPH"
-
+  
 stocks :: Map String (IO Stock)
 stocks = Map.fromList [
       (stockSymbol stableStock, return stableStock)
