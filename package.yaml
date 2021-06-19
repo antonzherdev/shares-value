@@ -29,6 +29,7 @@ library:
   - normaldistribution
   - random
   - containers
+  - split
 
 
 executables:

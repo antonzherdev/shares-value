@@ -31,9 +31,9 @@ calcEarnings revenue0 years = tail <$> scanM f (RevEarn revenue0 0) years
     f (RevEarn r _) i = revEarn r i
 
 calcStock :: FinParam -> Stock -> Rnd ([RevEarn], Double)
-calcStock param stock@Stock{stockCash = cash, stockFuture = fut, stockRevenue = revenue} = do
+calcStock param stock@Stock{stockFuture = fut, stockRevenue = revenue} = do
   es <- calcEarnings revenue fut
-  let ev = cash + intrinsicValue param stock (map reEarnings es)
+  let ev = stockBalanceOffset stock + intrinsicValue param stock (map reEarnings es)
   return (es, ev)
 
 
@@ -41,13 +41,13 @@ simulations :: FinParam -> Stock -> [([RevEarn], Double)]
 simulations param stock = simulate 10000 $ calcStock param stock
 
 
-stockSimulation :: Double -> FinParam -> Stock -> ([(MeanMinMax, MeanMinMax)], MeanMinMax)
+stockSimulation :: Double -> FinParam -> Stock -> ([(MeanMinMax, MeanMinMax, MeanMinMax)], MeanMinMax)
 stockSimulation confidence param stock = (map calcMean years, mk $ map snd sims)
   where
     sims = simulations param stock
     years = List.transpose $ map fst sims
     mk = mkMeanMinMax . withConfidence confidence
-    calcMean rs = (mk $ map reRevenue rs, mk $ map reEarnings rs)
+    calcMean rs = (mk $ map reRevenue rs, mk $ map reEarnings rs, mk $ map reMargin rs)
 
 
 
