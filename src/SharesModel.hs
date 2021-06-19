@@ -25,21 +25,21 @@ data Stock = Stock {
     stockCapMln :: Double,
     stockShareCountMln :: Double,
     stockFuture :: [StockYear]
-  } deriving (Show)
+  } 
 
 stockBalanceOffset :: Stock -> Double
 stockBalanceOffset s = stockCurrentAssets s - stockCurrentLiability s - stockLongTermLiability s
 
-data StockYear = StockYear {
+data StockYear  = StockYear {
     year :: Int,
-    yearRevenueGrowth :: N,
-    yearMargin :: N
-  } deriving (Show)
+    yearRevenueGrowth :: Distr,
+    yearMargin :: Distr
+  } 
 
-revGrowth :: Int -> N -> N -> StockYear
+revGrowth :: Int -> Distr -> Distr -> StockYear
 revGrowth = StockYear
 
-margin :: (N -> StockYear) -> N -> StockYear
+margin :: (Distr -> StockYear) -> Distr -> StockYear
 margin f = f
 
 data RevEarn = RevEarn {

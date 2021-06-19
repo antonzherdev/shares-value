@@ -10,7 +10,7 @@ finParam = FinParam {
       gdpGrowth = 0.028
     , marketPeRatio = 21.7
   }
-  
+
 stocks :: Map String (IO Stock)
 stocks = Map.fromList [
       (stockSymbol stableStock, return stableStock)
@@ -36,11 +36,11 @@ stocks = Map.fromList [
       , 2025 `revGrowth` (  0.00  `minMax95`   0.25)  `margin` (0.15 `minMax95` 0.30)
      ]
     , loadStock ("NZSE", "AIR", "Air New Zealand") [
-       2021 `revGrowth` ((-0.50) `minMax95` (-0.10)) `margin` (0.15 `minMax95` 0.30)
-     , 2022 `revGrowth` (  0.05  `minMax95`   0.25)  `margin` (0.15 `minMax95` 0.30)
-     , 2023 `revGrowth` (  0.00  `minMax95`   0.25)  `margin` (0.15 `minMax95` 0.30)
-     , 2024 `revGrowth` (  0.00  `minMax95`   0.25)  `margin` (0.15 `minMax95` 0.30)
-     , 2025 `revGrowth` (  0.00  `minMax95`   0.25)  `margin` (0.15 `minMax95` 0.30)
+       2021 `revGrowth` ((-0.10) `minMax95`   0.10) `margin` ((-0.15) `minMax95` (-0.10))
+     , 2022 `revGrowth` meanMinMax95 0.70 0.20 0.80  `margin` (0.00 `minMax95` 0.07)
+     , 2023 `revGrowth` (  0.10  `minMax95`   0.30)  `margin` (0.04 `minMax95` 0.10)
+     , 2024 `revGrowth` ((-0.02) `minMax95`   0.08)  `margin` (0.04 `minMax95` 0.10)
+     , 2025 `revGrowth` ((-0.02) `minMax95`   0.08)  `margin` (0.04 `minMax95` 0.10)
     ]
   ]
 
@@ -68,5 +68,5 @@ stableStock = Stock {
     mar = 0.1
     rev = 1000
     earn = rev * mar
-    sre = N (gdpGrowth finParam) 0.0
-    smr = N mar 0.0
+    sre = distrN (gdpGrowth finParam) 0.0
+    smr = distrN mar 0.0

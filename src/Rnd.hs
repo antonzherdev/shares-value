@@ -1,5 +1,5 @@
-module Rnd (Distribution(random), N(..), normalize, denormalize, Rnd, minMax95, minMax99, meanMinMax95, meanMinMax99,
-  (|*|), runRnd, simulate, mkN95,
+module Rnd (Distr, Rnd, minMax95, minMax99, meanMinMax95, meanMinMax99,
+  (|*|), runRnd, simulate, mkN95, distrN, distrAsymN,
   simulateN, simulateMmm, MeanMinMax, scanM, withConfidence, mkMeanMinMax, showD) where
 
 
@@ -10,57 +10,56 @@ import qualified Data.List as List
 import Numeric
 
 type Rnd = State StdGen
+type Distr = Rnd Double
 
-class Distribution a where
-  random :: a -> Rnd Double
+distrN :: Double -> Double -> Distr
+distrN mean std = (+) mean . (*) std <$> state normal
 
-data N = N Double Double deriving (Show)
+distrAsymN :: Double -> Double -> Double -> Distr
+distrAsymN mean lowStd highStd = (+) mean . mulStd <$> state normal
+  where 
+    mulStd :: Double -> Double
+    mulStd v
+      | v <= 0 = v*lowStd
+      | otherwise = v*highStd
 
 data MeanMinMax = MeanMinMax Double Double Double
 
 instance Show MeanMinMax where
     show (MeanMinMax mean pMin pMax) = showD 2 mean ++ " (" ++ showD 2 pMin ++ " .. " ++ showD 2 pMax ++ ")"
 
-instance Distribution N where
-   random n = denormalize n <$> state normal
-
 (|*|) :: MeanMinMax -> Double -> MeanMinMax
 (MeanMinMax mean pMin pMax) |*| v = MeanMinMax (mean*v) (pMin*v) (pMax*v)
 
-normalize :: N -> Double -> Double
-normalize (N mean std) v = (v - mean)/std
-
-denormalize :: N -> Double -> Double
-denormalize (N mean std) v = v*std + mean
-
-minMax95 :: Double -> Double -> N
-minMax95 pMin pMax = N mean std where
+minMax95 :: Double -> Double -> Distr
+minMax95 pMin pMax = distrN mean std where
   mean = (pMax + pMin)/2
   std = (pMax - pMin)/4
 
-minMax99 :: Double -> Double -> N
-minMax99 pMin pMax = N mean std where
+minMax99 :: Double -> Double -> Distr
+minMax99 pMin pMax = distrN mean std where
   mean = (pMax + pMin)/2
   std = (pMax - pMin)/6
 
-meanMinMax95N :: MeanMinMax -> N
-meanMinMax95N (MeanMinMax mean pMin pMax) = N mean1 std where
-  mean1 = (pMax + 4*mean + pMin)/6
-  std = (pMax - pMin)/4
+meanMinMax95N :: MeanMinMax -> Distr
+meanMinMax95N (MeanMinMax mean pMin pMax) = distrAsymN mean lowStd highStd
+  where
+    lowStd = (mean - pMin)/2
+    highStd = (pMax - mean)/2
 
-meanMinMax95 :: Double -> Double -> Double -> N
+meanMinMax95 :: Double -> Double -> Double -> Distr
 meanMinMax95 mean pMin pMax = meanMinMax95N $ MeanMinMax mean pMin pMax
 
-meanMinMax99N :: MeanMinMax -> N
-meanMinMax99N (MeanMinMax mean pMin pMax) = N mean1 std where
+meanMinMax99N :: MeanMinMax -> Distr
+meanMinMax99N (MeanMinMax mean pMin pMax) = distrN mean1 std where
   mean1 = (pMax + 4*mean + pMin)/6
   std = (pMax - pMin)/6
 
-meanMinMax99 :: Double -> Double -> Double -> N
+meanMinMax99 :: Double -> Double -> Double -> Distr
 meanMinMax99 mean pMin pMax = meanMinMax99N $ MeanMinMax mean pMin pMax
 
-mkN95 :: [Double] -> N
-mkN95 [] = N 0 1
+mkN95 :: [Double] -> Distr
+mkN95 [] = distrN 0 1
 mkN95 xs = meanMinMax95N $ mkMeanMinMax $ withConfidence 0.997 xs
 
 withConfidence :: Double -> [Double] -> [Double]
@@ -76,7 +75,7 @@ simulate :: Int -> Rnd a -> [a]
 simulate 0 _ = []
 simulate times r = runRnd times r : simulate (times - 1) r
 
-simulateN :: Int -> Rnd Double -> N
+simulateN :: Int -> Rnd Double -> Distr
 simulateN times r = mkN95 $ simulate times r
 
 simulateMmm :: Int -> Double -> Rnd Double -> MeanMinMax

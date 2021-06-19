@@ -20,8 +20,8 @@ expectedInterest FinParam{gdpGrowth=gdp, marketPeRatio=pe} = (1 + gdp)*(1 + 1/pe
 revEarn :: Double -> StockYear -> Rnd RevEarn
 revEarn revenue0 (StockYear _ grow mrg) =
   do
-    g <- random grow
-    m <- random mrg
+    g <- grow
+    m <- mrg
     let revenue = revenue0 * (1 + g)
     return $ RevEarn revenue (revenue*m)
 
