@@ -30,6 +30,7 @@ library:
   - random
   - containers
   - split
+  - statistics
 
 
 executables:

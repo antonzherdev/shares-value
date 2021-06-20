@@ -1,8 +1,9 @@
 module Rnd (Distr, Rnd, minMax95, minMax99, meanMinMax95, meanMinMax99,
   (|*|), (|+|), runRnd, simulate, mkN95, distrN, distrAsymN,
-  simulateN, simulateMmm, MeanMinMax, scanM, withConfidence, mkMeanMinMax, showD) where
+  simulateN, simulateMmm, MeanMinMax(..), scanM, withConfidence, mkMeanMinMax, showD, mmmProbability95AtLeast) where
 
-
+import Statistics.Distribution.Normal
+import Statistics.Distribution
 import Data.Random.Normal
 import Control.Monad.State
 import System.Random
@@ -13,66 +14,80 @@ type Rnd = State StdGen
 type Distr = Rnd Double
 
 distrN :: Double -> Double -> Distr
-distrN mean std = (+) mean . (*) std <$> state normal
+distrN m std = (+) m . (*) std <$> state normal
 
 distrAsymN :: Double -> Double -> Double -> Distr
-distrAsymN mean lowStd highStd = (+) mean . mulStd <$> state normal
-  where 
+distrAsymN m lowStd highStd = (+) m . mulStd <$> state normal
+  where
     mulStd :: Double -> Double
     mulStd v
       | v <= 0 = v*lowStd
       | otherwise = v*highStd
 
-data MeanMinMax = MeanMinMax Double Double Double
---instance Num MeanMinMax where
---    (MeanMinMax a b c) + (MeanMinMax x y z) = MeanMinMax (a + x) (b + y) (c + z)
---    x - y = (x - y)
---    negate (x) = (negateInt x)
---    x * y = (x * y)
---    abs n  = if n `geInt` 0 then n else negate n
---
---    signum n | n `ltInt` 0 = negate 1
---             | n `eqInt` 0 = 0
---             | otherwise   = 1
---
---    fromInteger i = (integerToInt i)
+data MeanMinMax = MeanMinMax {
+  mmmMean :: Double,
+  mmmMin :: Double,
+  mmmMax :: Double
+} 
 
 instance Show MeanMinMax where
-    show (MeanMinMax mean pMin pMax) = showD 2 mean ++ " (" ++ showD 2 pMin ++ " .. " ++ showD 2 pMax ++ ")"
+    show (MeanMinMax m pMin pMax) = showD 2 m ++ " (" ++ showD 2 pMin ++ " .. " ++ showD 2 pMax ++ ")"
 
+instance Num MeanMinMax where
+  (MeanMinMax a c e) + (MeanMinMax b d f) = MeanMinMax (a + b) (c + d) (e + f) 
+  (MeanMinMax a c e) - (MeanMinMax b d f) = MeanMinMax (a - b) (c - d) (e - f) 
+  (MeanMinMax a c e) * (MeanMinMax b d f) = MeanMinMax (a * b) (c * d) (e * f)
+  negate (MeanMinMax a b c) = MeanMinMax (-a) (-b) (-c)
+  abs (MeanMinMax a b c) = MeanMinMax (abs a) (abs b) (abs c)
+  signum (MeanMinMax a b c) = MeanMinMax (signum a) (signum b) (signum c)
+  fromInteger x = 
+    let d = fromIntegral x 
+    in MeanMinMax d d d  
+
+instance Fractional MeanMinMax where
+  (MeanMinMax a c e) / (MeanMinMax b d f) = MeanMinMax (a / b) (c / d) (e / f)
+  fromRational x = 
+    let d = fromRational x 
+    in MeanMinMax d d d  
+
+mmmProbability95AtLeast :: MeanMinMax -> Double -> Double
+mmmProbability95AtLeast (MeanMinMax m a z) x
+  | x == m = 0.5
+  | x < m = complCumulative (normalDistr m ((m - a)/2)) x
+  | otherwise = complCumulative (normalDistr m ((z - m)/2)) x
 
 (|*|) :: MeanMinMax -> Double -> MeanMinMax
-(MeanMinMax mean pMin pMax) |*| v = MeanMinMax (mean*v) (pMin*v) (pMax*v)
+(MeanMinMax m pMin pMax) |*| v = MeanMinMax (m*v) (pMin*v) (pMax*v)
 
 (|+|) :: MeanMinMax -> Double -> MeanMinMax
-(MeanMinMax mean pMin pMax) |+| v = MeanMinMax (mean+v) (pMin+v) (pMax+v)
+(MeanMinMax m pMin pMax) |+| v = MeanMinMax (m+v) (pMin+v) (pMax+v)
 
 minMax95 :: Double -> Double -> Distr
-minMax95 pMin pMax = distrN mean std where
-  mean = (pMax + pMin)/2
+minMax95 pMin pMax = distrN m std where
+  m = (pMax + pMin)/2
   std = (pMax - pMin)/4
 
 minMax99 :: Double -> Double -> Distr
-minMax99 pMin pMax = distrN mean std where
-  mean = (pMax + pMin)/2
+minMax99 pMin pMax = distrN m std where
+  m = (pMax + pMin)/2
   std = (pMax - pMin)/6
 
 meanMinMax95N :: MeanMinMax -> Distr
-meanMinMax95N (MeanMinMax mean pMin pMax) = distrAsymN mean lowStd highStd
+meanMinMax95N (MeanMinMax m pMin pMax) = distrAsymN m lowStd highStd
   where
-    lowStd = (mean - pMin)/2
-    highStd = (pMax - mean)/2
+    lowStd = (m - pMin)/2
+    highStd = (pMax - m)/2
 
 meanMinMax95 :: Double -> Double -> Double -> Distr
-meanMinMax95 mean pMin pMax = meanMinMax95N $ MeanMinMax mean pMin pMax
+meanMinMax95 m pMin pMax = meanMinMax95N $ MeanMinMax m pMin pMax
 
 meanMinMax99N :: MeanMinMax -> Distr
-meanMinMax99N (MeanMinMax mean pMin pMax) = distrN mean1 std where
-  mean1 = (pMax + 4*mean + pMin)/6
+meanMinMax99N (MeanMinMax m pMin pMax) = distrN mean1 std where
+  mean1 = (pMax + 4*m + pMin)/6
   std = (pMax - pMin)/6
 
 meanMinMax99 :: Double -> Double -> Double -> Distr
-meanMinMax99 mean pMin pMax = meanMinMax99N $ MeanMinMax mean pMin pMax
+meanMinMax99 m pMin pMax = meanMinMax99N $ MeanMinMax m pMin pMax
 
 mkN95 :: [Double] -> Distr
 mkN95 [] = distrN 0 1

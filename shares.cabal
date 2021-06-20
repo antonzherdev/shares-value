@@ -41,6 +41,7 @@ library
     , normaldistribution
     , random
     , split
+    , statistics
   default-language: Haskell2010
 
 executable shares-exe
