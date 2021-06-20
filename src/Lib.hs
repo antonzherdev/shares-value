@@ -30,14 +30,19 @@ procStock s@Stock{stockShareCountMln = sharesCountMln, stockCapMln = capMln} =  
   _ <- foldlM printYear 2021 (fst sm)
   putStrLn "---------------------------------------------------------"
   putStrLn $ stockSymbol s ++ ": " ++ stockName s 
-  putStrLn $ "Intrinsic price = " ++ show (snd sm |*| (1/sharesCountMln))
-  putStrLn $ "Current price   = " ++ showD 2 (capMln/sharesCountMln)
-  putStrLn $ "Intrinsic cap   = " ++ show (snd sm)
-  putStrLn $ "Current cap     = " ++ showD 2 capMln
+  putStrLn $ "Intrinsic cap  [$M] = " ++ show (snd sm)
+  putStrLn $ "Current debt   [$M] = " ++ show (stockDebt s)
+  putStrLn $ "Current equity [$M] = " ++ show (stockEquity s)
+  putStrLn $ "Equity cap     [$M] = " ++ show debtCap
+  putStrLn $ "Current cap    [$M] = " ++ showD 2 capMln
+  putStrLn $ "Intrinsic price [$] = " ++ show (debtCap |*| (1/sharesCountMln))
+  putStrLn $ "Current price   [$] = " ++ showD 2 (capMln/sharesCountMln)
   
   return ()
 --  putStrLn $ simulateMmm 10000 0.95 $ intrinsicValue 0.021 $ earnings
   where
+    equityPercent = stockEquity s / (stockEquity s + stockDebt s)
+    debtCap = snd sm |*| equityPercent
     sm = stockSimulation 0.95 finParam s
     printYear :: Int -> (MeanMinMax, MeanMinMax, MeanMinMax) -> IO Int
     printYear y (rev, earn, mrg) =

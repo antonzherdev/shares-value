@@ -54,7 +54,7 @@ stableStock = Stock {
       stockMarket = "test", stockSymbol = "stable", stockName = "stable"
     , stockCapMln = earn * marketPeRatio finParam
     , stockShareCountMln = 1000
-    , stockCurrentAssets = 0, stockCurrentLiability = 0, stockLongTermLiability = 0
+    , stockCurrentAssets = 0, stockCurrentLiability = 0, stockDebt = 0, stockEquity = 1000
     , stockRevenue = rev
     , stockEarnings = rev*mar
     , stockFuture = [

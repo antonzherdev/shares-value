@@ -1,6 +1,6 @@
 module SharesModel (
   FinParam(..), Stock(..), StockYear(..), RevEarn(..),
-  revGrowth, margin, stockBalanceOffset, loadStock, reMargin) where
+  revGrowth, margin, loadStock, reMargin) where
 
 import Data.List.Split
 import Rnd
@@ -19,7 +19,8 @@ data Stock = Stock {
     stockName :: String,
     stockCurrentAssets :: Double,
     stockCurrentLiability :: Double,
-    stockLongTermLiability :: Double,
+    stockDebt :: Double,
+    stockEquity :: Double,
     stockRevenue :: Double,
     stockEarnings :: Double,
     stockCapMln :: Double,
@@ -27,8 +28,6 @@ data Stock = Stock {
     stockFuture :: [StockYear]
   } 
 
-stockBalanceOffset :: Stock -> Double
-stockBalanceOffset s = stockCurrentAssets s - stockCurrentLiability s - stockLongTermLiability s
 
 data StockYear  = StockYear {
     year :: Int,
@@ -60,7 +59,8 @@ loadStock (market, symbol, name) future = (symbol, processFile <$> readFile ("sh
         stockName = name,
         stockCurrentAssets = d "health_current_assets",
         stockCurrentLiability = d "health_total_current_liab",
-        stockLongTermLiability = d "health_long_term_liab",
+        stockDebt = d "health_total_debt",
+        stockEquity = d "health_total_equity",
         stockRevenue = d "past_revenue",
         stockEarnings = d "past_ebt_excluding" * (1.0 - d "value_intrinsic_value_tax_rate"),
         stockCapMln = d "market_cap_listing" / 1000000,

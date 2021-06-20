@@ -1,5 +1,5 @@
 module Rnd (Distr, Rnd, minMax95, minMax99, meanMinMax95, meanMinMax99,
-  (|*|), runRnd, simulate, mkN95, distrN, distrAsymN,
+  (|*|), (|+|), runRnd, simulate, mkN95, distrN, distrAsymN,
   simulateN, simulateMmm, MeanMinMax, scanM, withConfidence, mkMeanMinMax, showD) where
 
 
@@ -24,12 +24,28 @@ distrAsymN mean lowStd highStd = (+) mean . mulStd <$> state normal
       | otherwise = v*highStd
 
 data MeanMinMax = MeanMinMax Double Double Double
+--instance Num MeanMinMax where
+--    (MeanMinMax a b c) + (MeanMinMax x y z) = MeanMinMax (a + x) (b + y) (c + z)
+--    x - y = (x - y)
+--    negate (x) = (negateInt x)
+--    x * y = (x * y)
+--    abs n  = if n `geInt` 0 then n else negate n
+--
+--    signum n | n `ltInt` 0 = negate 1
+--             | n `eqInt` 0 = 0
+--             | otherwise   = 1
+--
+--    fromInteger i = (integerToInt i)
 
 instance Show MeanMinMax where
     show (MeanMinMax mean pMin pMax) = showD 2 mean ++ " (" ++ showD 2 pMin ++ " .. " ++ showD 2 pMax ++ ")"
 
+
 (|*|) :: MeanMinMax -> Double -> MeanMinMax
 (MeanMinMax mean pMin pMax) |*| v = MeanMinMax (mean*v) (pMin*v) (pMax*v)
+
+(|+|) :: MeanMinMax -> Double -> MeanMinMax
+(MeanMinMax mean pMin pMax) |+| v = MeanMinMax (mean+v) (pMin+v) (pMax+v)
 
 minMax95 :: Double -> Double -> Distr
 minMax95 pMin pMax = distrN mean std where
