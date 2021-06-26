@@ -1,6 +1,6 @@
 module SharesModel (
-  FinParam(..), Stock(..), StockYear(..), RevEarn(..),
-  revGrowth, margin, loadStock, reMargin, updateStockCsv) where
+  FinParam(..), Stock(..), StockId(..), StockYear(..), RevEarn(..),
+  revGrowth, margin, loadStock, reMargin, updateStockCsv, stockId) where
 
 import Data.List.Split
 import Rnd
@@ -19,6 +19,16 @@ data FinParam = FinParam {
     marketPeRatio :: Double
   } deriving (Show)
 
+data StockId = StockId {
+    stockIdMarket :: String,
+    stockIdSymbol :: String
+  } deriving (Show, Eq)
+
+instance Ord StockId where
+  compare (StockId lm ls) (StockId rm rs) 
+    | lm == rm = compare ls rs
+    | otherwise = compare lm rm
+
 data Stock = Stock {
     stockMarket :: String,
     stockSymbol :: String,
@@ -33,7 +43,8 @@ data Stock = Stock {
     stockShareCountMln :: Double,
     stockFuture :: [StockYear]
   } 
-
+stockId :: Stock -> StockId
+stockId s = StockId (stockMarket s) (stockSymbol s)
 
 data StockYear  = StockYear {
     year :: Int,
@@ -55,9 +66,10 @@ reMargin :: RevEarn -> Double
 reMargin (RevEarn r e) = e/r
 
 
-loadStock :: (String, String, String) -> [StockYear] -> (String, IO Stock)
-loadStock (market, symbol, name) future = (symbol, processFile <$> readFile (stockFileName (market, symbol)))
+loadStock :: (String, String, String) -> [StockYear] -> (StockId, IO Stock)
+loadStock (market, symbol, name) future = (sId, processFile <$> readFile (stockFileName sId))
   where
+    sId = StockId market symbol
     processFile :: String -> Stock
     processFile text = Stock {
         stockMarket = market,
@@ -78,14 +90,13 @@ loadStock (market, symbol, name) future = (symbol, processFile <$> readFile (sto
         d :: String -> Double
         d nm = read $ head $ fromMaybe (error $ "Cannot find " ++ nm) $ parts !? nm
         
---        authorization: Bearer e526640dcd26f56e7df5d3459579e622619d5a44
-stockFileName :: (String, String) -> String
-stockFileName (market, symbol) = "shares/" ++  market ++ "_" ++ symbol ++ ".csv"
+stockFileName :: StockId -> String
+stockFileName (StockId market symbol) = "shares/" ++  market ++ "_" ++ symbol ++ ".csv"
 
-stockCsvUrl :: (String, String) -> String
-stockCsvUrl (m, s) = "https://api.simplywall.st/api/company/download/csv/" ++ m ++ ":" ++ s
+stockCsvUrl :: StockId -> String
+stockCsvUrl (StockId m s) = "https://api.simplywall.st/api/company/download/csv/" ++ m ++ ":" ++ s
 
-updateStockCsv :: String -> (String, String) -> IO ()
+updateStockCsv :: String -> StockId -> IO ()
 updateStockCsv token stock = do
   req0 <- parseRequest $ stockCsvUrl stock
   let req = req0 {requestHeaders= requestHeaders req0 ++ [(hAuthorization, C.pack $ "Bearer " ++ token)]}

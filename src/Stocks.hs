@@ -1,4 +1,4 @@
-module Stocks(finParam, stock, stocks) where
+module Stocks(finParam, stock, stocks, allStockIds) where
 
 import SharesModel
 import Rnd
@@ -11,9 +11,9 @@ finParam = FinParam {
     , marketPeRatio = 21.7
   }
 
-stocks :: Map String (IO Stock)
+stocks :: Map StockId (IO Stock)
 stocks = Map.fromList [
-      (stockSymbol stableStock, return stableStock)
+      (stockId stableStock, return stableStock)
     , loadStock ("NZSE", "ATM", "A2 Milk") [
          2021 `revGrowth` ((-0.50) `minMax95` (-0.22)) `margin` (0.0 `minMax95` 0.12)
        , 2022 `revGrowth` meanMinMax95 0.20 0.0 0.60   `margin` (0.05 `minMax95` 0.20)
@@ -44,7 +44,10 @@ stocks = Map.fromList [
     ]
   ]
 
-stock :: String -> IO Stock
+allStockIds :: [StockId]
+allStockIds = filter (\s -> stockIdMarket s /= "test") $ Map.keys stocks
+
+stock :: StockId -> IO Stock
 stock = (!) stocks
 
 

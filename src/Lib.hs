@@ -16,8 +16,10 @@ someFunc :: IO ()
 someFunc = getArgs >>= run
 
 run :: [String] -> IO ()
-run ["--refresh", token, symbol] = updateStockCsv token ("NZSE", symbol)
-run [symbol] = stock symbol >>= procStock
+run ["--refresh", token, symbol] = updateStockCsv token $ StockId "NZSE" symbol
+run ["--refresh-all", token] = forM_ allStockIds (updateStockCsv token)  
+run [symbol] = stock (StockId "NZSE" symbol) >>= procStock
+run o = error $ "invalid params " ++ show o
 
 
 procStock :: Stock -> IO ()
