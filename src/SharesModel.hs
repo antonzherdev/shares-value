@@ -1,12 +1,18 @@
 module SharesModel (
   FinParam(..), Stock(..), StockYear(..), RevEarn(..),
-  revGrowth, margin, loadStock, reMargin) where
+  revGrowth, margin, loadStock, reMargin, updateStockCsv) where
 
 import Data.List.Split
 import Rnd
 import qualified Data.Map as Map
 import Data.Map ((!?))
 import Data.Maybe
+import Control.Monad.Trans.Resource (runResourceT)
+import Data.Conduit.Combinators     (sinkFile)
+import Network.HTTP.Conduit         (parseRequest, requestHeaders)
+import Network.HTTP.Simple          (httpSink)
+import Network.HTTP.Types.Header    (hAuthorization)
+import qualified Data.ByteString.Char8 as C
 
 data FinParam = FinParam {
     gdpGrowth :: Double,
@@ -50,7 +56,7 @@ reMargin (RevEarn r e) = e/r
 
 
 loadStock :: (String, String, String) -> [StockYear] -> (String, IO Stock)
-loadStock (market, symbol, name) future = (symbol, processFile <$> readFile ("shares/" ++  market ++ "_" ++ symbol ++ ".csv"))
+loadStock (market, symbol, name) future = (symbol, processFile <$> readFile (stockFileName (market, symbol)))
   where
     processFile :: String -> Stock
     processFile text = Stock {
@@ -71,3 +77,16 @@ loadStock (market, symbol, name) future = (symbol, processFile <$> readFile ("sh
         parts = Map.fromList $ map (\ss -> (head ss, tail ss)) $ splitOn "," <$> lines text
         d :: String -> Double
         d nm = read $ head $ fromMaybe (error $ "Cannot find " ++ nm) $ parts !? nm
+        
+--        authorization: Bearer e526640dcd26f56e7df5d3459579e622619d5a44
+stockFileName :: (String, String) -> String
+stockFileName (market, symbol) = "shares/" ++  market ++ "_" ++ symbol ++ ".csv"
+
+stockCsvUrl :: (String, String) -> String
+stockCsvUrl (m, s) = "https://api.simplywall.st/api/company/download/csv/" ++ m ++ ":" ++ s
+
+updateStockCsv :: String -> (String, String) -> IO ()
+updateStockCsv token stock = do
+  req0 <- parseRequest $ stockCsvUrl stock
+  let req = req0 {requestHeaders= requestHeaders req0 ++ [(hAuthorization, C.pack $ "Bearer " ++ token)]}
+  runResourceT $ httpSink req $ \_ -> sinkFile (stockFileName stock)

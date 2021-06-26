@@ -13,10 +13,11 @@ import System.Environment
 
 
 someFunc :: IO ()
-someFunc = do
-  args <- getArgs
-  s <- stock $ head args
-  procStock s
+someFunc = getArgs >>= run
+
+run :: [String] -> IO ()
+run ["--refresh", token, symbol] = updateStockCsv token ("NZSE", symbol)
+run [symbol] = stock symbol >>= procStock
 
 
 procStock :: Stock -> IO ()

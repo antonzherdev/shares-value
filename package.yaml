@@ -31,7 +31,11 @@ library:
   - containers
   - split
   - statistics
-
+  - http-conduit
+  - conduit
+  - resourcet
+  - http-types
+  - bytestring
 
 executables:
   shares-exe:

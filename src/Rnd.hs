@@ -28,21 +28,21 @@ data MeanMinMax = MeanMinMax {
   mmmMean :: Double,
   mmmMin :: Double,
   mmmMax :: Double
-} 
+}
 
 instance Show MeanMinMax where
     show (MeanMinMax m pMin pMax) = showD 2 m ++ " (" ++ showD 2 pMin ++ " .. " ++ showD 2 pMax ++ ")"
 
 instance Num MeanMinMax where
-  (MeanMinMax a c e) + (MeanMinMax b d f) = MeanMinMax (a + b) (c + d) (e + f) 
-  (MeanMinMax a c e) - (MeanMinMax b d f) = MeanMinMax (a - b) (c - d) (e - f) 
+  (MeanMinMax a c e) + (MeanMinMax b d f) = MeanMinMax (a + b) (c + d) (e + f)
+  (MeanMinMax a c e) - (MeanMinMax b d f) = MeanMinMax (a - b) (c - d) (e - f)
   (MeanMinMax a c e) * (MeanMinMax b d f) = MeanMinMax (a * b) (c * d) (e * f)
   negate (MeanMinMax a b c) = MeanMinMax (-a) (-b) (-c)
   abs (MeanMinMax a b c) = MeanMinMax (abs a) (abs b) (abs c)
   signum (MeanMinMax a b c) = MeanMinMax (signum a) (signum b) (signum c)
-  fromInteger x = 
-    let d = fromIntegral x 
-    in MeanMinMax d d d  
+  fromInteger x =
+    let d = fromIntegral x
+    in MeanMinMax d d d
 
 instance Fractional MeanMinMax where
   (MeanMinMax a c e) / (MeanMinMax b d f) = MeanMinMax (a / b) (c / d) (e / f)
