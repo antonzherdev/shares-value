@@ -22,11 +22,11 @@ stocks = Map.fromList [
        , 2025 `revGrowth` ((-0.10) `minMax95`   0.25)  `margin` (0.10 `minMax95` 0.25)
       ]
     , loadStock ("NZSE", "FWL", "Foley Wines") [
-         2021 `revGrowth` ((-0.12) `minMax95` (-0.05)) `margin` (0.03 `minMax95` 0.10)
-       , 2022 `revGrowth` (  0.05  `minMax95`   0.15)  `margin` (0.05 `minMax95` 0.14)
-       , 2023 `revGrowth` (  0.00  `minMax95`   0.15)  `margin` (0.05 `minMax95` 0.14)
-       , 2024 `revGrowth` ((-0.10)  `minMax95`  0.15)  `margin` (0.05 `minMax95` 0.14)
-       , 2025 `revGrowth` ((-0.10) `minMax95`   0.15)  `margin` (0.05 `minMax95` 0.14)
+         2021 `revGrowth` ((-0.10) `minMax95`   0.05)  `margin` (0.07 `minMax95` 0.15)
+       , 2022 `revGrowth` (  0.05  `minMax95`   0.15)  `margin` (0.05 `minMax95` 0.15)
+       , 2023 `revGrowth` (  0.00  `minMax95`   0.15)  `margin` (0.05 `minMax95` 0.15)
+       , 2024 `revGrowth` ((-0.10)  `minMax95`  0.15)  `margin` (0.05 `minMax95` 0.15)
+       , 2025 `revGrowth` ((-0.10) `minMax95`   0.15)  `margin` (0.05 `minMax95` 0.15)
       ]
     , loadStock ("NZSE", "FPH", "Fisher & Paykel health") [
         2021 `revGrowth` ((-0.50) `minMax95` (-0.10)) `margin` (0.15 `minMax95` 0.30)
@@ -42,6 +42,13 @@ stocks = Map.fromList [
      , 2024 `revGrowth` ((-0.02) `minMax95`   0.08)  `margin` (0.04 `minMax95` 0.10)
      , 2025 `revGrowth` ((-0.02) `minMax95`   0.08)  `margin` (0.04 `minMax95` 0.10)
     ]
+    , loadStock ("NZSE", "KMD", "Kathmandu") [
+        2021 `revGrowth` (0.07    `minMax95`   0.15) `margin`  (0.03 `minMax95` 0.07)
+      , 2022 `revGrowth` (0.05    `minMax95`   0.17)  `margin` (0.03 `minMax95` 0.10)
+      , 2023 `revGrowth` (0.00    `minMax95`   0.20)  `margin` (0.03 `minMax95` 0.12)
+      , 2024 `revGrowth` (0.00    `minMax95`   0.20)  `margin` (0.03 `minMax95` 0.12)
+      , 2025 `revGrowth` (0.00    `minMax95`   0.20)  `margin` (0.03 `minMax95` 0.12)
+     ]
   ]
 
 allStockIds :: [StockId]
