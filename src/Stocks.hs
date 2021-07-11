@@ -48,15 +48,42 @@ stocks = Map.fromList [
       , 2023 `revGrowth` (0.00    `minMax95`   0.20)  `margin` (0.03 `minMax95` 0.12)
       , 2024 `revGrowth` (0.00    `minMax95`   0.20)  `margin` (0.03 `minMax95` 0.12)
       , 2025 `revGrowth` (0.00    `minMax95`   0.20)  `margin` (0.03 `minMax95` 0.12)
-     ]
-     
-     , loadStock ("NZSE", "MEL", "Meredian Energy") [
-         2021 `revGrowth` ((-0.20) `minMax95` 0.22) `margin`  (0.03 `minMax95` 0.12)
-       , 2022 `revGrowth` ((-0.20) `minMax95` 0.22) `margin`  (0.03 `minMax95` 0.12)
-       , 2023 `revGrowth` ((-0.20) `minMax95` 0.22) `margin`  (0.03 `minMax95` 0.12)
-       , 2024 `revGrowth` ((-0.33) `minMax95` 0.09) `margin`  (0.03 `minMax95` 0.12)
-       , 2025 `revGrowth` ((-0.20) `minMax95` 0.22) `margin`  (0.03 `minMax95` 0.12)
-      ]
+    ]
+    , loadStock ("NZSE", "HLG", "Hallenstein Glasson Holdings") [
+        2021 `revGrowth` (0.00    `minMax95`   0.17)  `margin` meanMinMax95 0.095 0.06 0.11
+      , 2022 `revGrowth` (0.00    `minMax95`   0.17)  `margin` meanMinMax95 0.095 0.06 0.11
+      , 2023 `revGrowth` (0.00    `minMax95`   0.17)  `margin` meanMinMax95 0.095 0.06 0.11
+      , 2024 `revGrowth` (0.00    `minMax95`   0.17)  `margin` meanMinMax95 0.095 0.06 0.11
+      , 2025 `revGrowth` (0.00    `minMax95`   0.17)  `margin` meanMinMax95 0.095 0.06 0.11
+    ]
+    , loadStock ("NZSE", "MFT", "Mainfreight") [
+        2021 `revGrowth` (0.00    `minMax95`   0.16)  `margin` (0.035 `minMax95` 0.055)
+      , 2022 `revGrowth` (0.00    `minMax95`   0.16)  `margin` (0.035 `minMax95` 0.055)
+      , 2023 `revGrowth` (0.00    `minMax95`   0.16)  `margin` (0.035 `minMax95` 0.055)
+      , 2024 `revGrowth` (0.00    `minMax95`   0.16)  `margin` (0.035 `minMax95` 0.055)
+      , 2025 `revGrowth` (0.00    `minMax95`   0.16)  `margin` (0.035 `minMax95` 0.055)
+    ]
+    , loadStock ("NZSE", "SPK", "Spark") [
+        2021 `revGrowth` ((-0.025) `minMax95`   0.035)  `margin` (0.085 `minMax95` 0.12)
+      , 2022 `revGrowth` ((-0.025) `minMax95`   0.035)  `margin` (0.085 `minMax95` 0.12)
+      , 2023 `revGrowth` ((-0.025) `minMax95`   0.035)  `margin` (0.085 `minMax95` 0.12)
+      , 2024 `revGrowth` ((-0.025) `minMax95`   0.035)  `margin` (0.085 `minMax95` 0.12)
+      , 2025 `revGrowth` ((-0.025) `minMax95`   0.035)  `margin` (0.085 `minMax95` 0.12)
+    ]
+    , loadStock ("NZSE", "FBU", "Fletcher Buildings") [
+        2021 `revGrowth` meanMinMax95 0.02 (-0.15) 0.045  `margin` meanMinMax95 0.00 (-0.045) 0.03
+      , 2022 `revGrowth` meanMinMax95 0.02 (-0.15) 0.045  `margin` meanMinMax95 0.025 (-0.045) 0.055
+      , 2023 `revGrowth` meanMinMax95 0.02 (-0.15) 0.045  `margin` meanMinMax95 0.025 (-0.045) 0.055
+      , 2024 `revGrowth` meanMinMax95 0.02 (-0.15) 0.045  `margin` meanMinMax95 0.025 (-0.045) 0.055
+      , 2025 `revGrowth` meanMinMax95 0.02 (-0.15) 0.045  `margin` meanMinMax95 0.025 (-0.045) 0.055
+    ]
+    , loadStock ("NZSE", "MEL", "Meredian Energy") [
+       2021 `revGrowth` ((-0.20) `minMax95` 0.22) `margin`  (0.03 `minMax95` 0.12)
+     , 2022 `revGrowth` ((-0.20) `minMax95` 0.22) `margin`  (0.03 `minMax95` 0.12)
+     , 2023 `revGrowth` ((-0.20) `minMax95` 0.22) `margin`  (0.03 `minMax95` 0.12)
+     , 2024 `revGrowth` ((-0.33) `minMax95` 0.09) `margin`  (0.03 `minMax95` 0.12)
+     , 2025 `revGrowth` ((-0.20) `minMax95` 0.22) `margin`  (0.03 `minMax95` 0.12)
+    ]
   ]
 
 allStockIds :: [StockId]
