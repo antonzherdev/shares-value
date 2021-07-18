@@ -18,6 +18,7 @@ someFunc = getArgs >>= run
 
 run :: [String] -> IO ()
 run ["--refresh", token, symbol] = updateStockCsv token $ StockId "NZSE" symbol
+run ["--refresh", token, market, symbol] = updateStockCsv token $ StockId market symbol
 run ["--refresh-all", token] = forM_ allStockIds (updateStockCsv token)  
 run [symbol] = stock (StockId "NZSE" symbol) >>= procStock
 run [market, symbol] = stock (StockId market symbol) >>= procStock

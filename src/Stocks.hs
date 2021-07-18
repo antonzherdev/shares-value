@@ -23,7 +23,7 @@ finParams = Map.fromList $ (\p -> (paramMarket p, p)) <$> [
       , marketPeRatio = 21.7
     }
   ]
-  
+
 stocks :: Map StockId (IO Stock)
 stocks = Map.fromList [
       (stockId stableStock, return stableStock)
@@ -69,6 +69,13 @@ stocks = Map.fromList [
       , 2024 `revGrowth` (0.00    `minMax95`   0.20)  `margin` (0.03 `minMax95` 0.12)
       , 2025 `revGrowth` (0.00    `minMax95`   0.20)  `margin` (0.03 `minMax95` 0.12)
     ]
+    , loadStock ("ASX", "HVN", "Harvey Norman") [
+        2021 `revGrowth` (0.00    `minMax95`   0.14) `margin`  (0.15 `minMax95` 0.30)
+      , 2022 `revGrowth` (0.00    `minMax95`   0.14)  `margin` (0.15 `minMax95` 0.30)
+      , 2023 `revGrowth` (0.00    `minMax95`   0.14)  `margin` (0.15 `minMax95` 0.30)
+      , 2024 `revGrowth` (0.00    `minMax95`   0.14)  `margin` (0.15 `minMax95` 0.30)
+      , 2025 `revGrowth` (0.00    `minMax95`   0.14)  `margin` (0.15 `minMax95` 0.30)
+    ]
     , loadStock ("NZSE", "HLG", "Hallenstein Glasson Holdings") [
         2021 `revGrowth` (0.00    `minMax95`   0.17)  `margin` meanMinMax95 0.095 0.06 0.11
       , 2022 `revGrowth` (0.00    `minMax95`   0.17)  `margin` meanMinMax95 0.095 0.06 0.11
@@ -103,6 +110,13 @@ stocks = Map.fromList [
      , 2023 `revGrowth` ((-0.20) `minMax95` 0.22) `margin`  (0.03 `minMax95` 0.12)
      , 2024 `revGrowth` ((-0.33) `minMax95` 0.09) `margin`  (0.03 `minMax95` 0.12)
      , 2025 `revGrowth` ((-0.20) `minMax95` 0.22) `margin`  (0.03 `minMax95` 0.12)
+    ]
+    , loadStock ("ASX", "IAG", "Insurance Australia Group") [
+       2021 `revGrowth` ((-0.20) `minMax95` 0.07) `margin`  ((-0.05) `minMax95` 0.0)
+     , 2022 `revGrowth` ((-0.20) `minMax95` 0.07) `margin`  (0.06 `minMax95` 0.125)
+     , 2023 `revGrowth` ((-0.20) `minMax95` 0.07) `margin`  (0.06 `minMax95` 0.125)
+     , 2024 `revGrowth` ((-0.33) `minMax95` 0.07) `margin`  (0.06 `minMax95` 0.125)
+     , 2025 `revGrowth` ((-0.20) `minMax95` 0.07) `margin`  (0.06 `minMax95` 0.125)
     ]
   ]
 
