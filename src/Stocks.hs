@@ -1,16 +1,29 @@
-module Stocks(finParam, stock, stocks, allStockIds) where
+module Stocks(finParams, stock, stocks, allStockIds) where
 
 import SharesModel
 import Rnd
 import qualified Data.Map as Map
 import Data.Map (Map, (!))
 
-finParam :: FinParam
-finParam = FinParam {
-      gdpGrowth = 0.028
-    , marketPeRatio = 21.7
-  }
-
+finParams :: Map String FinParam
+finParams = Map.fromList $ (\p -> (paramMarket p, p)) <$> [
+    FinParam {
+        paramMarket = "NZSE"
+      , gdpGrowth = 0.028
+      , marketPeRatio = 21.7
+    },
+    FinParam {
+        paramMarket = "ASX"
+      , gdpGrowth = 0.022
+      , marketPeRatio = 20.9
+    },
+    FinParam {
+        paramMarket = "test"
+      , gdpGrowth = 0.028
+      , marketPeRatio = 21.7
+    }
+  ]
+  
 stocks :: Map StockId (IO Stock)
 stocks = Map.fromList [
       (stockId stableStock, return stableStock)
@@ -28,6 +41,13 @@ stocks = Map.fromList [
        , 2024 `revGrowth` ((-0.10)  `minMax95`  0.15)  `margin` (0.05 `minMax95` 0.15)
        , 2025 `revGrowth` ((-0.10) `minMax95`   0.15)  `margin` (0.05 `minMax95` 0.15)
       ]
+    , loadStock ("ASX", "TWE", "Treasury Wine Estates") [
+       2021 `revGrowth` ((-0.10) `minMax95`   0.05)  `margin` (0.07 `minMax95` 0.15)
+     , 2022 `revGrowth` (  0.05  `minMax95`   0.15)  `margin` (0.05 `minMax95` 0.15)
+     , 2023 `revGrowth` (  0.00  `minMax95`   0.15)  `margin` (0.05 `minMax95` 0.15)
+     , 2024 `revGrowth` ((-0.10)  `minMax95`  0.15)  `margin` (0.05 `minMax95` 0.15)
+     , 2025 `revGrowth` ((-0.10) `minMax95`   0.15)  `margin` (0.05 `minMax95` 0.15)
+    ]
     , loadStock ("NZSE", "FPH", "Fisher & Paykel health") [
         2021 `revGrowth` ((-0.50) `minMax95` (-0.10)) `margin` (0.15 `minMax95` 0.30)
       , 2022 `revGrowth` (  0.05  `minMax95`   0.25)  `margin` (0.15 `minMax95` 0.30)
@@ -110,6 +130,7 @@ stableStock = Stock {
        , 2024 `revGrowth` sre `margin` smr
       ]
   } where
+    finParam = finParams ! "test"
     mar = 0.1
     rev = 1000
     earn = rev * mar

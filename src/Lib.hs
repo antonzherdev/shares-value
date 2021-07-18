@@ -8,6 +8,7 @@ import SharesModel
 import Rnd
 import Data.Foldable
 import System.Environment
+import Data.Map ((!))
 
 --riskFreeRate = 0.021
 
@@ -19,6 +20,7 @@ run :: [String] -> IO ()
 run ["--refresh", token, symbol] = updateStockCsv token $ StockId "NZSE" symbol
 run ["--refresh-all", token] = forM_ allStockIds (updateStockCsv token)  
 run [symbol] = stock (StockId "NZSE" symbol) >>= procStock
+run [market, symbol] = stock (StockId market symbol) >>= procStock
 run o = error $ "invalid params " ++ show o
 
 
@@ -45,6 +47,7 @@ procStock s@Stock{stockShareCountMln = sharesCountMln, stockCapMln = capMln} =  
   return ()
 --  putStrLn $ simulateMmm 10000 0.95 $ intrinsicValue 0.021 $ earnings
   where
+    finParam = finParams ! stockMarket s
     targetInterest = expectedInterest finParam
     undervalue = (debtCap |+| (-capMln)) / debtCap
     equityPercent = stockEquity s / (stockEquity s + stockDebt s)

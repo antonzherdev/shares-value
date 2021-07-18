@@ -15,6 +15,7 @@ import Network.HTTP.Types.Header    (hAuthorization)
 import qualified Data.ByteString.Char8 as C
 
 data FinParam = FinParam {
+    paramMarket :: String,
     gdpGrowth :: Double,
     marketPeRatio :: Double
   } deriving (Show)
