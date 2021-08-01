@@ -1,6 +1,7 @@
 module Rnd (Distr, Rnd, minMax95, minMax99, meanMinMax95, meanMinMax99,
   (|*|), (|+|), runRnd, simulate, mkN95, distrN, distrAsymN,
-  simulateN, simulateMmm, MeanMinMax(..), scanM, withConfidence, mkMeanMinMax, showD, mmmProbability95AtLeast) where
+  simulateN, simulateMmm, MeanMinMax(..), scanM, withConfidence, mkMeanMinMax, showD, 
+  mmmProbability95AtLeast, meanMinMax95N) where
 
 import Statistics.Distribution.Normal
 import Statistics.Distribution

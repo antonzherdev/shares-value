@@ -1,7 +1,7 @@
 module SharesModel (
   FinParam(..), StockData(..), Stock(..), StockFuture, StockId(..), FutureYear(..), RevEarn(..), PastYear(..),
   revGrowth, margin, loadStockData, makeStock, reMargin, updateStockCsv, stockRevenue, pastMargin,
-  pastRevenueGrowths, pastRevenueGrowth,
+  pastRevenueGrowths, pastRevenueGrowth, projFuture,
   stockEarnings, constFuture, pastYearMargin) where
 
 import Data.List.Split
@@ -83,6 +83,13 @@ data Stock = Stock {
 
 constFuture :: StockFuture -> StockData -> StockFuture
 constFuture f _ = f
+  
+projFuture :: [Int] -> StockData -> StockFuture
+projFuture years d = (\y -> FutureYear y g m) <$> years
+  where
+    m = meanMinMax95N $ pastMargin d  
+    g = meanMinMax95N $ pastRevenueGrowth d  
+
 
 revGrowth :: Int -> Distr -> Distr -> FutureYear
 revGrowth = FutureYear
