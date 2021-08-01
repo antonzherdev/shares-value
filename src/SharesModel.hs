@@ -1,6 +1,8 @@
 module SharesModel (
   FinParam(..), StockData(..), Stock(..), StockFuture, StockId(..), FutureYear(..), RevEarn(..), PastYear(..),
-  revGrowth, margin, loadStockData, makeStock, reMargin, updateStockCsv, stockRevenue, stockEarnings, constFuture) where
+  revGrowth, margin, loadStockData, makeStock, reMargin, updateStockCsv, stockRevenue, pastMargin,
+  pastRevenueGrowths, pastRevenueGrowth,
+  stockEarnings, constFuture, pastYearMargin) where
 
 import Data.List.Split
 import Rnd
@@ -35,6 +37,9 @@ data PastYear = PastYear {
   pastYearEarnings :: Double
 }
 
+pastYearMargin :: PastYear -> Double
+pastYearMargin d = pastYearEarnings d / pastYearRevenue d
+
 data StockData = StockData {
     stockId :: StockId,
     stockName :: String,
@@ -45,7 +50,19 @@ data StockData = StockData {
     stockPast :: [PastYear],
     stockCapMln :: Double,
     stockShareCountMln :: Double
-  } 
+  }
+
+pastMargin :: StockData -> MeanMinMax
+pastMargin d = mkMeanMinMax $ pastYearMargin <$> stockPast d
+
+pastRevenueGrowth :: StockData -> MeanMinMax
+pastRevenueGrowth = mkMeanMinMax . pastRevenueGrowths
+
+pastRevenueGrowths :: StockData -> [Double]
+pastRevenueGrowths d =
+  let revs = pastYearRevenue <$> stockPast d in
+  (\ (a, b) -> (a - b)/b ) <$> zip revs (tail revs)
+
 
 stockRevenue :: StockData -> Double
 stockRevenue = pastYearRevenue . head . stockPast
@@ -82,10 +99,10 @@ reMargin (RevEarn r e) = e/r
 
 
 makeStock :: (String, String, String) -> (StockData -> StockFuture) -> (StockId, IO Stock)
-makeStock (market, symbol, name) makeFuture = 
-  let sId = StockId market symbol in 
+makeStock (market, symbol, name) makeFuture =
+  let sId = StockId market symbol in
   (sId, loadStockData sId name >>= (\d -> return $ Stock d (makeFuture d)))
-     
+
 
 loadStockData :: StockId -> String -> IO StockData
 loadStockData sId name = processFile <$> readFile (stockFileName sId)

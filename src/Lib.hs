@@ -28,12 +28,13 @@ run o = error $ "invalid params " ++ show o
 procStock :: Stock -> IO ()
 procStock s =  do
   putStrLn "# Now"
-  putStrLn $ "Revenue  = " ++ showD 2 (stockRevenue d)
-  putStrLn $ "Earnings = " ++ showD 2 (stockEarnings d)
-  putStrLn $ "Margin   = " ++ showD 2 (stockEarnings d / stockRevenue d * 100)
+  putStrLn $ "Revenue  = " ++ unwords (showD 2 . pastYearRevenue <$> stockPast d)
+  putStrLn $ "Growth   = " ++ show (pastRevenueGrowth d |*| 100) ++ " [" ++ unwords (showD 2 . (100 *) <$> pastRevenueGrowths d) ++ "]"
+  putStrLn $ "Earnings = " ++ unwords (showD 2 . pastYearEarnings <$> stockPast d)
+  putStrLn $ "Margin   = " ++ show (pastMargin d |*| 100) ++ " [" ++ unwords (showD 2 . (100 *) . pastYearMargin  <$> stockPast d) ++ "]"
   _ <- foldlM printYear 2021 (fst sm)
   putStrLn "---------------------------------------------------------"
-  putStrLn $ stockIdSymbol sId ++ ": " ++ stockName d 
+  putStrLn $ stockIdSymbol sId ++ ": " ++ stockName d
   putStrLn $ "Intrinsic cap  [$M] = " ++ show (snd sm)
   putStrLn $ "Current debt   [$M] = " ++ show (stockDebt d)
   putStrLn $ "Current equity [$M] = " ++ show (stockEquity d)
