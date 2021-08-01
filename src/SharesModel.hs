@@ -1,6 +1,6 @@
 module SharesModel (
-  FinParam(..), Stock(..), StockId(..), StockYear(..), RevEarn(..), PastYear(..),
-  revGrowth, margin, loadStock, reMargin, updateStockCsv, stockId, stockRevenue, stockEarnings) where
+  FinParam(..), StockData(..), Stock(..), StockFuture, StockId(..), FutureYear(..), RevEarn(..), PastYear(..),
+  revGrowth, margin, loadStockData, makeStock, reMargin, updateStockCsv, stockRevenue, stockEarnings, constFuture) where
 
 import Data.List.Split
 import Rnd
@@ -35,9 +35,8 @@ data PastYear = PastYear {
   pastYearEarnings :: Double
 }
 
-data Stock = Stock {
-    stockMarket :: String,
-    stockSymbol :: String,
+data StockData = StockData {
+    stockId :: StockId,
     stockName :: String,
     stockCurrentAssets :: Double,
     stockCurrentLiability :: Double,
@@ -45,28 +44,33 @@ data Stock = Stock {
     stockEquity :: Double,
     stockPast :: [PastYear],
     stockCapMln :: Double,
-    stockShareCountMln :: Double,
-    stockFuture :: [StockYear]
+    stockShareCountMln :: Double
   } 
-stockId :: Stock -> StockId
-stockId s = StockId (stockMarket s) (stockSymbol s)
 
-stockRevenue :: Stock -> Double
+stockRevenue :: StockData -> Double
 stockRevenue = pastYearRevenue . head . stockPast
 
-stockEarnings :: Stock -> Double
-stockEarnings = pastYearEarnings . head . stockPast 
+stockEarnings :: StockData -> Double
+stockEarnings = pastYearEarnings . head . stockPast
 
-data StockYear  = StockYear {
+type StockFuture = [FutureYear]
+data FutureYear  = FutureYear {
     year :: Int,
     yearRevenueGrowth :: Distr,
     yearMargin :: Distr
   } 
+data Stock = Stock {
+    stockData :: StockData,
+    stockFuture :: StockFuture
+}
 
-revGrowth :: Int -> Distr -> Distr -> StockYear
-revGrowth = StockYear
+constFuture :: StockFuture -> StockData -> StockFuture
+constFuture f _ = f
 
-margin :: (Distr -> StockYear) -> Distr -> StockYear
+revGrowth :: Int -> Distr -> Distr -> FutureYear
+revGrowth = FutureYear
+
+margin :: (Distr -> FutureYear) -> Distr -> FutureYear
 margin f = f
 
 data RevEarn = RevEarn {
@@ -77,14 +81,18 @@ reMargin :: RevEarn -> Double
 reMargin (RevEarn r e) = e/r
 
 
-loadStock :: (String, String, String) -> [StockYear] -> (StockId, IO Stock)
-loadStock (market, symbol, name) future = (sId, processFile <$> readFile (stockFileName sId))
+makeStock :: (String, String, String) -> (StockData -> StockFuture) -> (StockId, IO Stock)
+makeStock (market, symbol, name) makeFuture = 
+  let sId = StockId market symbol in 
+  (sId, loadStockData sId name >>= (\d -> return $ Stock d (makeFuture d)))
+     
+
+loadStockData :: StockId -> String -> IO StockData
+loadStockData sId name = processFile <$> readFile (stockFileName sId)
   where
-    sId = StockId market symbol
-    processFile :: String -> Stock
-    processFile text = Stock {
-        stockMarket = market,
-        stockSymbol = symbol,
+    processFile :: String -> StockData
+    processFile text = StockData {
+        stockId = sId,
         stockName = name,
         stockCurrentAssets = d "health_current_assets",
         stockCurrentLiability = d "health_total_current_liab",
@@ -92,8 +100,7 @@ loadStock (market, symbol, name) future = (sId, processFile <$> readFile (stockF
         stockEquity = d "health_total_equity",
         stockPast = uncurry PastYear <$> zip (dd "past_revenue_ltm_history") (dd "past_net_income_ltm_history"),
         stockCapMln = d "market_cap_listing" / 1000000,
-        stockShareCountMln = d "market_cap_shares_outstanding" / 1000000,
-        stockFuture = future
+        stockShareCountMln = d "market_cap_shares_outstanding" / 1000000
       }
       where
         parts = Map.fromList $ map (\ss -> (head ss, tail ss)) $ splitOn "," <$> lines text

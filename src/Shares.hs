@@ -17,23 +17,23 @@ intrinsicValue FinParam{gdpGrowth=gdp, marketPeRatio=pe} _ es =
 expectedInterest :: FinParam -> Double
 expectedInterest FinParam{gdpGrowth=gdp, marketPeRatio=pe} = (1 + gdp)*(1 + 1/pe) - 1
 
-revEarn :: Double -> StockYear -> Rnd RevEarn
-revEarn revenue0 (StockYear _ grow mrg) =
+revEarn :: Double -> FutureYear -> Rnd RevEarn
+revEarn revenue0 (FutureYear _ grow mrg) =
   do
     g <- grow
     m <- mrg
     let revenue = revenue0 * (1 + g)
     return $ RevEarn revenue (revenue*m)
 
-calcEarnings :: Double -> [StockYear] -> Rnd [RevEarn]
+calcEarnings :: Double -> [FutureYear] -> Rnd [RevEarn]
 calcEarnings revenue0 years = tail <$> scanM f (RevEarn revenue0 0) years
   where
     f (RevEarn r _) i = revEarn r i
 
 calcStock :: FinParam -> Stock -> Rnd ([RevEarn], Double)
-calcStock param stock@Stock{stockFuture = fut} = do
-  es <- calcEarnings (stockRevenue stock) fut
-  let ev = stockCurrentAssets stock - stockCurrentLiability stock + intrinsicValue param stock (map reEarnings es)
+calcStock param stock@Stock{stockFuture = fut, stockData = d} = do
+  es <- calcEarnings (stockRevenue d) fut
+  let ev = stockCurrentAssets d - stockCurrentLiability d + intrinsicValue param stock (map reEarnings es)
   return (es, ev)
 
 

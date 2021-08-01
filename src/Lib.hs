@@ -26,17 +26,17 @@ run o = error $ "invalid params " ++ show o
 
 
 procStock :: Stock -> IO ()
-procStock s@Stock{stockShareCountMln = sharesCountMln, stockCapMln = capMln} =  do
+procStock s =  do
   putStrLn "# Now"
-  putStrLn $ "Revenue  = " ++ showD 2 (stockRevenue s)
-  putStrLn $ "Earnings = " ++ showD 2 (stockEarnings s)
-  putStrLn $ "Margin   = " ++ showD 2 (stockEarnings s / stockRevenue s * 100)
+  putStrLn $ "Revenue  = " ++ showD 2 (stockRevenue d)
+  putStrLn $ "Earnings = " ++ showD 2 (stockEarnings d)
+  putStrLn $ "Margin   = " ++ showD 2 (stockEarnings d / stockRevenue d * 100)
   _ <- foldlM printYear 2021 (fst sm)
   putStrLn "---------------------------------------------------------"
-  putStrLn $ stockSymbol s ++ ": " ++ stockName s 
+  putStrLn $ stockIdSymbol sId ++ ": " ++ stockName d 
   putStrLn $ "Intrinsic cap  [$M] = " ++ show (snd sm)
-  putStrLn $ "Current debt   [$M] = " ++ show (stockDebt s)
-  putStrLn $ "Current equity [$M] = " ++ show (stockEquity s)
+  putStrLn $ "Current debt   [$M] = " ++ show (stockDebt d)
+  putStrLn $ "Current equity [$M] = " ++ show (stockEquity d)
   putStrLn $ "Equity cap     [$M] = " ++ show debtCap
   putStrLn $ "Current cap    [$M] = " ++ showD 2 capMln
   putStrLn $ "Intrinsic price [$] = " ++ show (debtCap |*| (1/sharesCountMln))
@@ -48,10 +48,14 @@ procStock s@Stock{stockShareCountMln = sharesCountMln, stockCapMln = capMln} =  
   return ()
 --  putStrLn $ simulateMmm 10000 0.95 $ intrinsicValue 0.021 $ earnings
   where
-    finParam = finParams ! stockMarket s
+    sId = stockId d
+    d = stockData s
+    sharesCountMln = stockShareCountMln d
+    capMln = stockCapMln d
+    finParam = finParams ! stockIdMarket sId
     targetInterest = expectedInterest finParam
     undervalue = (debtCap |+| (-capMln)) / debtCap
-    equityPercent = stockEquity s / (stockEquity s + stockDebt s)
+    equityPercent = stockEquity d / (stockEquity d + stockDebt d)
     debtCap = snd sm |*| equityPercent
     sm = stockSimulation 0.95 finParam s
     printYear :: Int -> (MeanMinMax, MeanMinMax, MeanMinMax) -> IO Int
