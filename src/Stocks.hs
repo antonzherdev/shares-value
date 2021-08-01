@@ -34,26 +34,15 @@ stocks = Map.fromList [
        , 2024 `revGrowth` (  0.00  `minMax95`   0.25)  `margin` (0.10 `minMax95` 0.25)
        , 2025 `revGrowth` ((-0.10) `minMax95`   0.25)  `margin` (0.10 `minMax95` 0.25)
       ]
-    , makeStock ("NZSE", "FWL", "Foley Wines") $ constFuture [
+    , makeStock ("NZSE", "FWL", "Foley Wines") $ semiProjFuture [2021 .. 2025] [
          2021 `revGrowth` ((-0.10) `minMax95`   0.05)  `margin` (0.07 `minMax95` 0.15)
-       , 2022 `revGrowth` (  0.05  `minMax95`   0.15)  `margin` (0.05 `minMax95` 0.15)
-       , 2023 `revGrowth` (  0.00  `minMax95`   0.15)  `margin` (0.05 `minMax95` 0.15)
-       , 2024 `revGrowth` ((-0.10)  `minMax95`  0.15)  `margin` (0.05 `minMax95` 0.15)
-       , 2025 `revGrowth` ((-0.10) `minMax95`   0.15)  `margin` (0.05 `minMax95` 0.15)
       ]
-    , makeStock ("ASX", "TWE", "Treasury Wine Estates") $ constFuture [
+    , makeStock ("ASX", "TWE", "Treasury Wine Estates") $ semiProjFuture [2021 .. 2025] [
        2021 `revGrowth` ((-0.10) `minMax95`   0.05)  `margin` (0.07 `minMax95` 0.15)
-     , 2022 `revGrowth` (  0.05  `minMax95`   0.15)  `margin` (0.05 `minMax95` 0.15)
-     , 2023 `revGrowth` (  0.00  `minMax95`   0.15)  `margin` (0.05 `minMax95` 0.15)
-     , 2024 `revGrowth` ((-0.10)  `minMax95`  0.15)  `margin` (0.05 `minMax95` 0.15)
-     , 2025 `revGrowth` ((-0.10) `minMax95`   0.15)  `margin` (0.05 `minMax95` 0.15)
     ]
-    , makeStock ("NZSE", "FPH", "Fisher & Paykel health") $ constFuture [
+    , makeStock ("NZSE", "FPH", "Fisher & Paykel health") $ semiProjFuture [2021 .. 2025] [
         2021 `revGrowth` ((-0.50) `minMax95` (-0.10)) `margin` (0.15 `minMax95` 0.30)
       , 2022 `revGrowth` (  0.05  `minMax95`   0.25)  `margin` (0.15 `minMax95` 0.30)
-      , 2023 `revGrowth` (  0.00  `minMax95`   0.25)  `margin` (0.15 `minMax95` 0.30)
-      , 2024 `revGrowth` (  0.00  `minMax95`   0.25)  `margin` (0.15 `minMax95` 0.30)
-      , 2025 `revGrowth` (  0.00  `minMax95`   0.25)  `margin` (0.15 `minMax95` 0.30)
      ]
     , makeStock ("NZSE", "AIR", "Air New Zealand") $ constFuture [
        2021 `revGrowth` ((-0.10) `minMax95`   0.10) `margin` ((-0.15) `minMax95` (-0.10))
@@ -62,21 +51,12 @@ stocks = Map.fromList [
      , 2024 `revGrowth` ((-0.02) `minMax95`   0.08)  `margin` (0.04 `minMax95` 0.10)
      , 2025 `revGrowth` ((-0.02) `minMax95`   0.08)  `margin` (0.04 `minMax95` 0.10)
     ]
-    , makeStock ("NZSE", "KMD", "Kathmandu") $ constFuture [
+    , makeStock ("NZSE", "KMD", "Kathmandu") $ semiProjFuture [2021 .. 2025] [
         2021 `revGrowth` (0.07    `minMax95`   0.15) `margin`  (0.03 `minMax95` 0.07)
       , 2022 `revGrowth` (0.05    `minMax95`   0.17)  `margin` (0.03 `minMax95` 0.10)
-      , 2023 `revGrowth` (0.00    `minMax95`   0.20)  `margin` (0.03 `minMax95` 0.12)
-      , 2024 `revGrowth` (0.00    `minMax95`   0.20)  `margin` (0.03 `minMax95` 0.12)
-      , 2025 `revGrowth` (0.00    `minMax95`   0.20)  `margin` (0.03 `minMax95` 0.12)
     ]
     , makeStock ("ASX", "HVN", "Harvey Norman") $ projFuture [2021 .. 2025]
-    , makeStock ("NZSE", "HLG", "Hallenstein Glasson Holdings") $ constFuture [
-        2021 `revGrowth` (0.00    `minMax95`   0.17)  `margin` meanMinMax95 0.095 0.06 0.11
-      , 2022 `revGrowth` (0.00    `minMax95`   0.17)  `margin` meanMinMax95 0.095 0.06 0.11
-      , 2023 `revGrowth` (0.00    `minMax95`   0.17)  `margin` meanMinMax95 0.095 0.06 0.11
-      , 2024 `revGrowth` (0.00    `minMax95`   0.17)  `margin` meanMinMax95 0.095 0.06 0.11
-      , 2025 `revGrowth` (0.00    `minMax95`   0.17)  `margin` meanMinMax95 0.095 0.06 0.11
-    ]
+    , makeStock ("NZSE", "HLG", "Hallenstein Glasson Holdings") $ projFuture [2021 .. 2025]
     , makeStock ("NZSE", "MFT", "Mainfreight") $ projFuture [2021 .. 2025]
     , makeStock ("NZSE", "SPK", "Spark") $ projFuture [2021 .. 2025]
     , makeStock ("NZSE", "FBU", "Fletcher Buildings") $ projFuture [2021 .. 2025]
@@ -87,13 +67,9 @@ stocks = Map.fromList [
      , 2024 `revGrowth` ((-0.33) `minMax95` 0.09) `margin`  (0.03 `minMax95` 0.12)
      , 2025 `revGrowth` ((-0.20) `minMax95` 0.22) `margin`  (0.03 `minMax95` 0.12)
     ]
-    , makeStock ("ASX", "IAG", "Insurance Australia Group") $ constFuture [
+    , makeStock ("ASX", "IAG", "Insurance Australia Group") $ semiProjFuture [2021 .. 2025] [
        2021 `revGrowth` ((-0.20) `minMax95` 0.07) `margin`  ((-0.05) `minMax95` 0.0)
-     , 2022 `revGrowth` ((-0.20) `minMax95` 0.07) `margin`  (0.06 `minMax95` 0.125)
-     , 2023 `revGrowth` ((-0.20) `minMax95` 0.07) `margin`  (0.06 `minMax95` 0.125)
-     , 2024 `revGrowth` ((-0.33) `minMax95` 0.07) `margin`  (0.06 `minMax95` 0.125)
-     , 2025 `revGrowth` ((-0.20) `minMax95` 0.07) `margin`  (0.06 `minMax95` 0.125)
-    ]
+     ] 
   ]
 
 allStockIds :: [StockId]

@@ -1,7 +1,7 @@
 module SharesModel (
   FinParam(..), StockData(..), Stock(..), StockFuture, StockId(..), FutureYear(..), RevEarn(..), PastYear(..),
   revGrowth, margin, loadStockData, makeStock, reMargin, updateStockCsv, stockRevenue, pastMargin,
-  pastRevenueGrowths, pastRevenueGrowth, projFuture,
+  pastRevenueGrowths, pastRevenueGrowth, projFuture, semiProjFuture,
   stockEarnings, constFuture, pastYearMargin) where
 
 import Data.List.Split
@@ -15,6 +15,7 @@ import Network.HTTP.Conduit         (parseRequest, requestHeaders)
 import Network.HTTP.Simple          (httpSink)
 import Network.HTTP.Types.Header    (hAuthorization)
 import qualified Data.ByteString.Char8 as C
+import Data.List (find)
 
 data FinParam = FinParam {
     paramMarket :: String,
@@ -90,6 +91,13 @@ projFuture years d = (\y -> FutureYear y g m) <$> years
     m = meanMinMax95N $ pastMargin d  
     g = meanMinMax95N $ pastRevenueGrowth d  
 
+semiProjFuture :: [Int] -> StockFuture -> StockData -> StockFuture
+semiProjFuture years fut d = fut ++ prj
+  where
+    ys = filter (\y -> isNothing (find ((y ==). year ) fut)) years
+    prj = (\y -> FutureYear y g m) <$> ys
+    m = meanMinMax95N $ pastMargin d  
+    g = meanMinMax95N $ pastRevenueGrowth d  
 
 revGrowth :: Int -> Distr -> Distr -> FutureYear
 revGrowth = FutureYear
