@@ -1,6 +1,6 @@
 module SharesModel (
-  FinParam(..), Stock(..), StockId(..), StockYear(..), RevEarn(..),
-  revGrowth, margin, loadStock, reMargin, updateStockCsv, stockId) where
+  FinParam(..), Stock(..), StockId(..), StockYear(..), RevEarn(..), PastYear(..),
+  revGrowth, margin, loadStock, reMargin, updateStockCsv, stockId, stockRevenue, stockEarnings) where
 
 import Data.List.Split
 import Rnd
@@ -30,6 +30,11 @@ instance Ord StockId where
     | lm == rm = compare ls rs
     | otherwise = compare lm rm
 
+data PastYear = PastYear {
+  pastYearRevenue :: Double,
+  pastYearEarnings :: Double
+}
+
 data Stock = Stock {
     stockMarket :: String,
     stockSymbol :: String,
@@ -38,14 +43,19 @@ data Stock = Stock {
     stockCurrentLiability :: Double,
     stockDebt :: Double,
     stockEquity :: Double,
-    stockRevenue :: Double,
-    stockEarnings :: Double,
+    stockPast :: [PastYear],
     stockCapMln :: Double,
     stockShareCountMln :: Double,
     stockFuture :: [StockYear]
   } 
 stockId :: Stock -> StockId
 stockId s = StockId (stockMarket s) (stockSymbol s)
+
+stockRevenue :: Stock -> Double
+stockRevenue = pastYearRevenue . head . stockPast
+
+stockEarnings :: Stock -> Double
+stockEarnings = pastYearEarnings . head . stockPast 
 
 data StockYear  = StockYear {
     year :: Int,
@@ -80,16 +90,19 @@ loadStock (market, symbol, name) future = (sId, processFile <$> readFile (stockF
         stockCurrentLiability = d "health_total_current_liab",
         stockDebt = d "health_total_debt",
         stockEquity = d "health_total_equity",
-        stockRevenue = d "past_revenue",
-        stockEarnings = d "past_ebt_excluding" * (1.0 - d "value_intrinsic_value_tax_rate"),
+        stockPast = uncurry PastYear <$> zip (dd "past_revenue_ltm_history") (dd "past_net_income_ltm_history"),
         stockCapMln = d "market_cap_listing" / 1000000,
         stockShareCountMln = d "market_cap_shares_outstanding" / 1000000,
         stockFuture = future
       }
       where
         parts = Map.fromList $ map (\ss -> (head ss, tail ss)) $ splitOn "," <$> lines text
+        part :: String -> [String]
+        part nm = fromMaybe (error $ "Cannot find " ++ nm) $ parts !? nm
         d :: String -> Double
-        d nm = read $ head $ fromMaybe (error $ "Cannot find " ++ nm) $ parts !? nm
+        d = read . head . part
+        dd :: String -> [Double]
+        dd nm = fmap read $ filter (/= "") $ part nm
         
 stockFileName :: StockId -> String
 stockFileName (StockId market symbol) = "shares/" ++  market ++ "_" ++ symbol ++ ".csv"

@@ -134,8 +134,7 @@ stableStock = Stock {
     , stockCapMln = earn * marketPeRatio finParam
     , stockShareCountMln = 1000
     , stockCurrentAssets = 0, stockCurrentLiability = 0, stockDebt = 0, stockEquity = 1000
-    , stockRevenue = rev
-    , stockEarnings = rev*mar
+    , stockPast = [PastYear rev earn]
     , stockFuture = [
          2021 `revGrowth` sre `margin` smr
        , 2022 `revGrowth` sre `margin` smr
@@ -146,7 +145,7 @@ stableStock = Stock {
   } where
     finParam = finParams ! "test"
     mar = 0.1
-    rev = 1000
+    rev = 1000.0
     earn = rev * mar
     sre = distrN (gdpGrowth finParam) 0.0
     smr = distrN mar 0.0

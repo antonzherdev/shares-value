@@ -31,8 +31,8 @@ calcEarnings revenue0 years = tail <$> scanM f (RevEarn revenue0 0) years
     f (RevEarn r _) i = revEarn r i
 
 calcStock :: FinParam -> Stock -> Rnd ([RevEarn], Double)
-calcStock param stock@Stock{stockFuture = fut, stockRevenue = revenue} = do
-  es <- calcEarnings revenue fut
+calcStock param stock@Stock{stockFuture = fut} = do
+  es <- calcEarnings (stockRevenue stock) fut
   let ev = stockCurrentAssets stock - stockCurrentLiability stock + intrinsicValue param stock (map reEarnings es)
   return (es, ev)
 
