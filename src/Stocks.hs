@@ -4,6 +4,8 @@ import SharesModel
 import Rnd
 import qualified Data.Map as Map
 import Data.Map (Map, (!))
+import Data.List (find)
+import Data.Maybe (isNothing)
 
 finParams :: Map String FinParam
 finParams = Map.fromList $ (\p -> (paramMarket p, p)) <$> [
@@ -55,11 +57,11 @@ stocks = Map.fromList [
         2021 `revGrowth` (0.07    `minMax95`   0.15) `margin`  (0.03 `minMax95` 0.07)
       , 2022 `revGrowth` (0.05    `minMax95`   0.17)  `margin` (0.03 `minMax95` 0.10)
     ]
-    , makeStock ("ASX", "HVN", "Harvey Norman") $ projFuture [2021 .. 2025]
-    , makeStock ("NZSE", "HLG", "Hallenstein Glasson Holdings") $ projFuture [2021 .. 2025]
-    , makeStock ("NZSE", "MFT", "Mainfreight") $ projFuture [2021 .. 2025]
-    , makeStock ("NZSE", "SPK", "Spark") $ projFuture [2021 .. 2025]
-    , makeStock ("NZSE", "FBU", "Fletcher Buildings") $ projFuture [2021 .. 2025]
+    , makeStock ("ASX", "HVN", "Harvey Norman") $ projFuture (0.3, 0.0) [2021 .. 2025]
+    , makeStock ("NZSE", "HLG", "Hallenstein Glasson Holdings") $ projFuture (0.3, 0.1) [2021 .. 2025]
+    , makeStock ("NZSE", "MFT", "Mainfreight") $ projFuture (0.3, 0.0) [2021 .. 2025]
+    , makeStock ("NZSE", "SPK", "Spark") $ projFuture (0.3, 0.0) [2021 .. 2025]
+    , makeStock ("NZSE", "FBU", "Fletcher Buildings") $ projFuture (0.3, 0.0) [2021 .. 2025]
     , makeStock ("NZSE", "MEL", "Meredian Energy") $ constFuture [
        2021 `revGrowth` ((-0.20) `minMax95` 0.22) `margin`  (0.03 `minMax95` 0.12)
      , 2022 `revGrowth` ((-0.20) `minMax95` 0.22) `margin`  (0.03 `minMax95` 0.12)
@@ -71,6 +73,35 @@ stocks = Map.fromList [
        2021 `revGrowth` ((-0.20) `minMax95` 0.07) `margin`  ((-0.05) `minMax95` 0.0)
      ] 
   ]
+
+
+constFuture :: StockFuture -> StockData -> StockFuture
+constFuture f _ = f
+  
+projFuture :: (Double, Double) -> [Int] -> StockData -> StockFuture
+projFuture (gDecay, mDecay) years d =  
+  (\(y, g, m) -> FutureYear y (meanMinMax95N g) (meanMinMax95N m)) <$> 
+    go years (pastRevenueGrowth d, pastMargin d)
+  where
+    gg = gdpGrowth $ finParams ! (stockIdMarket . stockId) d
+    
+    go :: [Int] -> (MeanMinMax, MeanMinMax) -> [(Int, MeanMinMax, MeanMinMax)]
+    go  [] _ = []
+    go (y:ys) (g, m) = (y, g', m') : go ys (g', m')
+      where 
+        gd = gDecay * (mmmMean g - gg)
+        g' = MeanMinMax (mmmMean g - gd) (mmmMin g - gd/2) (mmmMax g)
+        md = mDecay * mmmMean m 
+        m' = MeanMinMax (mmmMean m - md) (mmmMin m - md/2) (mmmMax m)
+
+semiProjFuture :: [Int] -> StockFuture -> StockData -> StockFuture
+semiProjFuture years fut d = fut ++ prj
+  where
+    ys = filter (\y -> isNothing (find ((y ==). year ) fut)) years
+    prj = (\y -> FutureYear y g m) <$> ys
+    m = meanMinMax95N $ pastMargin d  
+    g = meanMinMax95N $ pastRevenueGrowth d  
+    
 
 allStockIds :: [StockId]
 allStockIds = filter (\s -> stockIdMarket s /= "test") $ Map.keys stocks

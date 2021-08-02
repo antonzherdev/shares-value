@@ -32,7 +32,7 @@ procStock s =  do
   putStrLn $ "Growth   = " ++ show (pastRevenueGrowth d |*| 100) ++ " [" ++ unwords (showD 2 . (100 *) <$> pastRevenueGrowths d) ++ "]"
   putStrLn $ "Earnings = " ++ unwords (showD 2 . pastYearEarnings <$> stockPast d)
   putStrLn $ "Margin   = " ++ show (pastMargin d |*| 100) ++ " [" ++ unwords (showD 2 . (100 *) . pastYearMargin  <$> stockPast d) ++ "]"
-  _ <- foldlM printYear 2021 (fst sm)
+  _ <- foldlM printYear 2021 $ zip prevRevs yss
   putStrLn "---------------------------------------------------------"
   putStrLn $ stockIdSymbol sId ++ ": " ++ stockName d
   putStrLn $ "Intrinsic cap  [$M] = " ++ show (snd sm)
@@ -59,11 +59,17 @@ procStock s =  do
     equityPercent = stockEquity d / (stockEquity d + stockDebt d)
     debtCap = snd sm |*| equityPercent
     sm = stockSimulation 0.95 finParam s
-    printYear :: Int -> (MeanMinMax, MeanMinMax, MeanMinMax) -> IO Int
-    printYear y (rev, earn, mrg) =
+    yss :: [(MeanMinMax, MeanMinMax, MeanMinMax)]
+    yss = fst sm
+    ppRs = (\(r, _, _ ) -> r) <$> yss
+    prevRevs = mkMeanMinMax [stockRevenue d] : ppRs
+    printYear :: Int -> (MeanMinMax, (MeanMinMax, MeanMinMax, MeanMinMax)) -> IO Int
+    printYear y (pr, (rev, earn, mrg)) =
       do
         putStrLn $ "# " ++ show y
         putStrLn $ "Revenue  = " ++ show rev
+        let growth = mkMeanMinMax [mmmMean rev/mmmMean pr, mmmMin rev/mmmMin pr, mmmMax rev/mmmMax pr]
+        putStrLn $ "Growth   = " ++ show ((growth |+| (-1)) |*| 100)
         putStrLn $ "Earnings = " ++ show earn
         putStrLn $ "Margin   = " ++ show (mrg |*| 100)
         return $ y + 1
