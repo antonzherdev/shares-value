@@ -1,5 +1,5 @@
 module Rnd (Distr, Rnd, minMax95, minMax99, meanMinMax95, meanMinMax99,
-  (|*|), (|+|), runRnd, simulate, mkN95, distrN, distrAsymN,
+  (|*|), (|+|), runRnd, simulate, mkN95, distrN, distrAsymN, distrConst,
   simulateN, simulateMmm, MeanMinMax(..), scanM, withConfidence, mkMeanMinMax, showD, 
   mmmProbability95AtLeast, meanMinMax95N) where
 
@@ -13,6 +13,9 @@ import Numeric
 
 type Rnd = State StdGen
 type Distr = Rnd Double
+
+distrConst :: Double -> Distr
+distrConst = return
 
 distrN :: Double -> Double -> Distr
 distrN m std = (+) m . (*) std <$> state normal

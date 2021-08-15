@@ -4,9 +4,6 @@ import SharesModel
 import Rnd
 import qualified Data.Map as Map
 import Data.Map (Map, (!))
-import Data.List (find)
-import Data.Maybe (isNothing)
-import Debug.Trace (trace)
 
 finParams :: Map String FinParam
 finParams = Map.fromList $ (\p -> (paramMarket p, p)) <$> [
@@ -31,30 +28,30 @@ stocks :: Map StockId (IO Stock)
 stocks = Map.fromList [
       (stockId (stockData stableStock), return stableStock)
     , makeStock ("NZSE", "ATM", "A2 Milk") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] [
-         2021 `revGrowth` ((-0.50) `minMax95` (-0.22)) `margin` (0.0 `minMax95` 0.12)
-       , 2022 `revGrowth` meanMinMax95 0.20 0.0 0.60   `margin` (0.05 `minMax95` 0.20)
-       , 2023 `revGrowth` (  0.10  `minMax95`   0.25)  `margin` (0.10 `minMax95` 0.25)
+         revGrowth ((-0.50) `minMax95` (-0.22)) `margin` (0.0 `minMax95` 0.12)
+       , revGrowth (meanMinMax95 0.20 0.0 0.60) `margin` (0.05 `minMax95` 0.20)
+       , revGrowth (  0.10  `minMax95`   0.25)  `margin` (0.10 `minMax95` 0.25)
       ]
     , makeStock ("NZSE", "FWL", "Foley Wines") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] [
-         2021 `revGrowth` ((-0.10) `minMax95`   0.05)  `margin` (0.06 `minMax95` 0.15)
+         revGrowth ((-0.10) `minMax95`   0.05)  `margin` (0.06 `minMax95` 0.15)
       ]
     , makeStock ("ASX", "TWE", "Treasury Wine Estates") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] [
-       2021 `revGrowth` ((-0.10) `minMax95`   0.05)  `margin` (0.07 `minMax95` 0.15)
+       revGrowth ((-0.10) `minMax95`   0.05)  `margin` (0.07 `minMax95` 0.15)
     ]
     , makeStock ("NZSE", "FPH", "Fisher & Paykel health") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] [
-        2021 `revGrowth` ((-0.50) `minMax95` (-0.10)) `margin` (0.15 `minMax95` 0.30)
-      , 2022 `revGrowth` (  0.05  `minMax95`   0.25)  `margin` (0.15 `minMax95` 0.30)
+        revGrowth ((-0.50) `minMax95` (-0.10)) `margin` (0.15 `minMax95` 0.30)
+      , revGrowth (  0.05  `minMax95`   0.25)  `margin` (0.15 `minMax95` 0.30)
      ]
     , makeStock ("NZSE", "AIR", "Air New Zealand") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] [
-       2021 `revGrowth` ((-0.10) `minMax95`   0.10) `margin` ((-0.15) `minMax95` (-0.10))
-     , 2022 `revGrowth` meanMinMax95 0.70 0.20 0.80  `margin` (0.00 `minMax95` 0.07)
-     , 2023 `revGrowth` (  0.10  `minMax95`   0.30)  `margin` (0.04 `minMax95` 0.10)
-     , 2024 `revGrowth` ((-0.02) `minMax95`   0.08)  `margin` (0.04 `minMax95` 0.10)
-     , 2025 `revGrowth` ((-0.02) `minMax95`   0.08)  `margin` (0.04 `minMax95` 0.10)
-    ]
+       revenue (2400 `minMax95` 2600) `fixedExpenses` (900 `minMax95` 1600) `margin` (0.10 `minMax95` 0.20)
+     , revGrowth (meanMinMax95 0.70 0.20 0.80)`margin` (0.00 `minMax95` 0.07)
+     , revGrowth (  0.10  `minMax95`   0.30)  `margin` (0.04 `minMax95` 0.10)
+     , revGrowth ((-0.02) `minMax95`   0.08)  `margin` (0.04 `minMax95` 0.10)
+     , revGrowth ((-0.02) `minMax95`   0.08)  `margin` (0.04 `minMax95` 0.10)
+    ] . dropLastYear
     , makeStock ("NZSE", "KMD", "Kathmandu") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] [
-        2021 `revGrowth` (0.07    `minMax95`   0.15) `margin`  (0.03 `minMax95` 0.07)
-      , 2022 `revGrowth` (0.05    `minMax95`   0.17)  `margin` (0.03 `minMax95` 0.10)
+        revGrowth (0.07 `minMax95` 0.15) `margin` (0.03 `minMax95` 0.07)
+      , revGrowth (0.05 `minMax95` 0.17) `margin` (0.03 `minMax95` 0.10)
     ]
     , makeStock ("ASX", "HVN", "Harvey Norman") $ projFuture (0.3, 0.0) [2021 .. 2031]
     , makeStock ("NZSE", "HLG", "Hallenstein Glasson Holdings") $ projFuture (0.3, 0.1) [2021 .. 2031]
@@ -62,21 +59,23 @@ stocks = Map.fromList [
     , makeStock ("NZSE", "SPK", "Spark") $ projFuture (0.3, 0.0) [2021 .. 2031]
     , makeStock ("NZSE", "FBU", "Fletcher Buildings") $ projFuture (0.3, 0.0) [2021 .. 2031]
     , makeStock ("NZSE", "MEL", "Meredian Energy") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] [
-       2021 `revGrowth` ((-0.20) `minMax95` 0.22) `margin`  (0.03 `minMax95` 0.12)
-     , 2022 `revGrowth` ((-0.20) `minMax95` 0.22) `margin`  (0.03 `minMax95` 0.12)
-     , 2023 `revGrowth` ((-0.20) `minMax95` 0.22) `margin`  (0.03 `minMax95` 0.12)
-     , 2024 `revGrowth` ((-0.33) `minMax95` 0.09) `margin`  (0.03 `minMax95` 0.12)
-     , 2025 `revGrowth` ((-0.20) `minMax95` 0.22) `margin`  (0.03 `minMax95` 0.12)
+       revGrowth ((-0.20) `minMax95` 0.22) `margin`  (0.03 `minMax95` 0.12)
+     , revGrowth ((-0.20) `minMax95` 0.22) `margin`  (0.03 `minMax95` 0.12)
+     , revGrowth ((-0.20) `minMax95` 0.22) `margin`  (0.03 `minMax95` 0.12)
+     , revGrowth ((-0.33) `minMax95` 0.09) `margin`  (0.03 `minMax95` 0.12)
+     , revGrowth ((-0.20) `minMax95` 0.22) `margin`  (0.03 `minMax95` 0.12)
     ]
     , makeStock ("ASX", "IAG", "Insurance Australia Group") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] [
-       2021 `revGrowth` ((-0.20) `minMax95` 0.07) `margin`  ((-0.05) `minMax95` 0.0)
+       revGrowth ((-0.20) `minMax95` 0.07) `margin`  ((-0.05) `minMax95` 0.0)
      ] 
   ]
 
+dropLastYear :: StockData -> StockData
+dropLastYear s = s {stockPast = tail (stockPast s)}
 
 projFuture :: (Double, Double) -> [Int] -> StockData -> StockFuture
 projFuture (gDecay, mDecay) years d =
-  (\(y, g, m) -> FutureYear y (meanMinMax95N g) (meanMinMax95N m)) <$>
+  (\(_, g, m) -> revGrowth (meanMinMax95N g) `margin` meanMinMax95N m) <$>
     yss 
 --    trace (show yss) yss
 
@@ -96,9 +95,9 @@ projFuture (gDecay, mDecay) years d =
         m' = MeanMinMax (mmmMean m - md) (mmmMin m - md) (mmmMax m - md)
 
 semiProjFuture :: (Double, Double) -> [Int] -> StockFuture -> StockData -> StockFuture
-semiProjFuture dd years fut d = fut ++ prj
+semiProjFuture dd years fut d = fut ++ drop (length fut) prj
   where
-    prj = filter (\y -> isNothing (find ((year y ==). year ) fut)) $ projFuture dd years d
+    prj = projFuture dd years d
 
 
 allStockIds :: [StockId]
@@ -111,11 +110,11 @@ stock = (!) stocks
 -- stock price should be equal to pe ratio if stock growth with inflation rate
 stableStock :: Stock
 stableStock = Stock d [
-       2021 `revGrowth` sre `margin` smr
-     , 2022 `revGrowth` sre `margin` smr
-     , 2025 `revGrowth` sre `margin` smr
-     , 2023 `revGrowth` sre `margin` smr
-     , 2024 `revGrowth` sre `margin` smr
+       revGrowth sre `margin` smr
+     , revGrowth sre `margin` smr
+     , revGrowth sre `margin` smr
+     , revGrowth sre `margin` smr
+     , revGrowth sre `margin` smr
     ]
    where
     d = StockData {

@@ -1,7 +1,7 @@
 module SharesModel (
-  FinParam(..), StockData(..), Stock(..), StockFuture, StockId(..), FutureYear(..), RevEarn(..), PastYear(..),
+  FinParam(..), StockData(..), Stock(..), StockFuture, StockId(..), FutureYear, RevEarn(..), PastYear(..),
   revGrowth, margin, loadStockData, makeStock, reMargin, updateStockCsv, stockRevenue, pastMargin,
-  pastRevenueGrowths, pastRevenueGrowth, 
+  pastRevenueGrowths, pastRevenueGrowth, revenue, fixedExpenses,
   stockEarnings, pastYearMargin) where
 
 import Data.List.Split
@@ -71,28 +71,40 @@ stockEarnings :: StockData -> Double
 stockEarnings = pastYearEarnings . head . stockPast
 
 type StockFuture = [FutureYear]
-data FutureYear  = FutureYear {
-    year :: Int,
-    yearRevenueGrowth :: Distr,
-    yearMargin :: Distr
-  } 
+type FutureYear = RevEarn -> Rnd RevEarn
+
 data Stock = Stock {
     stockData :: StockData,
     stockFuture :: StockFuture
 }
 
-revGrowth :: Int -> Distr -> Distr -> FutureYear
-revGrowth = FutureYear
+revGrowth :: Distr -> FutureYear
+revGrowth grow (RevEarn r0 _ _) = grow >>= (\g -> return $ RevEarn (r0 * (1 + g)) 0 0)
 
-margin :: (Distr -> FutureYear) -> Distr -> FutureYear
-margin f = f
+revenue :: Distr -> FutureYear
+revenue rev _ = rev >>= (\r -> return $ RevEarn r 0 0)
+            
+margin :: FutureYear -> Distr -> FutureYear
+margin prev mgn re =
+  do 
+     p <- prev re
+     m <- mgn
+     return p {reEarnings=reRevenue p * m - reFixedExpenses p}
 
+fixedExpenses :: FutureYear -> Distr -> FutureYear
+fixedExpenses prev fe re =
+  do 
+     p <- prev re
+     e <- fe
+     return p {reFixedExpenses=e}
+     
 data RevEarn = RevEarn {
     reRevenue :: Double,
-    reEarnings :: Double
+    reEarnings :: Double,
+    reFixedExpenses :: Double
   } deriving (Show)
 reMargin :: RevEarn -> Double
-reMargin (RevEarn r e) = e/r
+reMargin (RevEarn r e fe) = (e + fe)/r
 
 
 makeStock :: (String, String, String) -> (StockData -> StockFuture) -> (StockId, IO Stock)
