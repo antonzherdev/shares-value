@@ -83,28 +83,28 @@ revGrowth grow (RevEarn r0 _ _) = grow >>= (\g -> return $ RevEarn (r0 * (1 + g)
 
 revenue :: Distr -> FutureYear
 revenue rev _ = rev >>= (\r -> return $ RevEarn r 0 0)
-            
+
 margin :: FutureYear -> Distr -> FutureYear
 margin prev mgn re =
-  do 
+  do
      p <- prev re
      m <- mgn
      return p {reEarnings=reRevenue p * m - reFixedExpenses p}
 
 fixedExpenses :: FutureYear -> Distr -> FutureYear
 fixedExpenses prev fe re =
-  do 
+  do
      p <- prev re
      e <- fe
      return p {reFixedExpenses=e}
-     
+
 data RevEarn = RevEarn {
     reRevenue :: Double,
     reEarnings :: Double,
     reFixedExpenses :: Double
   } deriving (Show)
 reMargin :: RevEarn -> Double
-reMargin (RevEarn r e fe) = (e + fe)/r
+reMargin (RevEarn r e _) = e/r
 
 
 makeStock :: (String, String, String) -> (StockData -> StockFuture) -> (StockId, IO Stock)

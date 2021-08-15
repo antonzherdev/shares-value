@@ -34,7 +34,7 @@ stocks = Map.fromList [
       ]
     , makeStock ("NZSE", "FWL", "Foley Wines") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] [
          revGrowth ((-0.10) `minMax95`   0.05)  `margin` (0.06 `minMax95` 0.15)
-      ]
+      ] 
     , makeStock ("ASX", "TWE", "Treasury Wine Estates") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] [
        revGrowth ((-0.10) `minMax95`   0.05)  `margin` (0.07 `minMax95` 0.15)
     ]
@@ -43,18 +43,31 @@ stocks = Map.fromList [
       , revGrowth (  0.05  `minMax95`   0.25)  `margin` (0.15 `minMax95` 0.30)
      ]
     , makeStock ("NZSE", "AIR", "Air New Zealand") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] [
-       revenue (2400 `minMax95` 2600) `fixedExpenses` (900 `minMax95` 1600) `margin` (0.10 `minMax95` 0.20)
-     , revGrowth (meanMinMax95 0.70 0.20 0.80)`margin` (0.00 `minMax95` 0.07)
-     , revGrowth (  0.10  `minMax95`   0.30)  `margin` (0.04 `minMax95` 0.10)
-     , revGrowth ((-0.02) `minMax95`   0.08)  `margin` (0.04 `minMax95` 0.10)
-     , revGrowth ((-0.02) `minMax95`   0.08)  `margin` (0.04 `minMax95` 0.10)
+    {- from Dec 2018 -} 
+    {- to   Dec 2019 = $5867 -}
+    
+    {- from Dec 2019 -}  
+    {- to   Dec 2020 = $3055 -}
+    
+    {- from Dec 2020 -}  {- through Jun 2021 $2400 - $2600-}
+       revenue (2400 `minMax95` 3000) `fixedExpenses` meanMinMax95 950 600 1600 `margin` (0.1 `minMax95` 0.2)
+    {- to   Dec 2021 -}
+    
+    {- from Dec 2021   40% - 50% of $5800 -}
+     , revenue (3200 `minMax95` 4350) `fixedExpenses` meanMinMax95 1000 600 2000 `margin` (0.15 `minMax95` 0.22)
+    {- to   Dec 2022   70% - 100% of $5800 -}
+    
+    {- from Dec 2022   70% - 110% of $5800 -}
+     , revenue (4600 `minMax95` 6400) `fixedExpenses` meanMinMax95 1000 600 2000 `margin` (0.17 `minMax95` 0.25)
+    {- to   Dec 2023   90% - 110% of $5800 -}
+     , revGrowth (meanMinMax95 0.03 (-0.02) 0.3) `margin` (0.04 `minMax95` 0.10)                
     ] . dropLastYear
     , makeStock ("NZSE", "KMD", "Kathmandu") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] [
         revGrowth (0.07 `minMax95` 0.15) `margin` (0.03 `minMax95` 0.07)
       , revGrowth (0.05 `minMax95` 0.17) `margin` (0.03 `minMax95` 0.10)
     ]
     , makeStock ("ASX", "HVN", "Harvey Norman") $ projFuture (0.3, 0.0) [2021 .. 2031]
-    , makeStock ("NZSE", "HLG", "Hallenstein Glasson Holdings") $ projFuture (0.3, 0.1) [2021 .. 2031]
+    , makeStock ("NZSE", "HLG", "Hallenstein Glasson Holdings") $ projFuture (0.3, 0.0) [2021 .. 2031]
     , makeStock ("NZSE", "MFT", "Mainfreight") $ projFuture (0.3, 0.0) [2021 .. 2031]
     , makeStock ("NZSE", "SPK", "Spark") $ projFuture (0.3, 0.0) [2021 .. 2031]
     , makeStock ("NZSE", "FBU", "Fletcher Buildings") $ projFuture (0.3, 0.0) [2021 .. 2031]
