@@ -5,10 +5,10 @@ import SharesModel
 import qualified Data.List as List
 --import Debug.Trace(traceShowId)
 
-intrinsicValue :: FinParam -> Stock -> [Double] -> Double
+intrinsicValue :: FinParam -> Stock -> [Double] -> Double -> Double
 --intrinsicValue p earnings = (es + last earnings/p) / ( (1 + p) ^ years)
-intrinsicValue FinParam{gdpGrowth=gdp, marketPeRatio=pe} _ es =
-  (en*pe + sum es) / int
+intrinsicValue FinParam{gdpGrowth=gdp, marketPeRatio=pe} _ es adj  =
+  (en*pe + sum es + adj) / int
   where
     n = length es
     en = last es
@@ -24,8 +24,9 @@ calcEarnings revenue0 years = tail <$> scanM f (RevEarn revenue0 0 0) years
 
 calcStock :: FinParam -> Stock -> Rnd ([RevEarn], Double)
 calcStock param stock@Stock{stockFuture = fut, stockData = d} = do
-  es <- calcEarnings (stockRevenue d) fut
-  let ev = stockCurrentAssets d - stockCurrentLiability d + intrinsicValue param stock (map reEarnings es)
+  es <- calcEarnings (stockRevenue d) (futureYears fut)
+  adj <- futureAssetsAdjustment fut
+  let ev = stockCurrentAssets d - stockCurrentLiability d + adj + intrinsicValue param stock (map reEarnings es) adj
   return (es, ev)
 
 

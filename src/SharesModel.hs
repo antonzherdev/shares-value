@@ -1,5 +1,5 @@
 module SharesModel (
-  FinParam(..), StockData(..), Stock(..), StockFuture, StockId(..), FutureYear, RevEarn(..), PastYear(..),
+  FinParam(..), StockData(..), Stock(..), StockFuture(..), StockId(..), FutureYear, RevEarn(..), PastYear(..),
   revGrowth, margin, loadStockData, makeStock, reMargin, updateStockCsv, stockRevenue, pastMargin,
   pastRevenueGrowths, pastRevenueGrowth, revenue, fixedExpenses,
   stockEarnings, pastYearMargin) where
@@ -70,12 +70,15 @@ stockRevenue = pastYearRevenue . head . stockPast
 stockEarnings :: StockData -> Double
 stockEarnings = pastYearEarnings . head . stockPast
 
-type StockFuture = [FutureYear]
+data StockFuture = StockFuture {
+  futureYears :: [FutureYear],
+  futureAssetsAdjustment :: Distr
+}
 type FutureYear = RevEarn -> Rnd RevEarn
 
 data Stock = Stock {
-    stockData :: StockData,
-    stockFuture :: StockFuture
+  stockData :: StockData,
+  stockFuture :: StockFuture
 }
 
 revGrowth :: Distr -> FutureYear

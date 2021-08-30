@@ -27,21 +27,21 @@ finParams = Map.fromList $ (\p -> (paramMarket p, p)) <$> [
 stocks :: Map StockId (IO Stock)
 stocks = Map.fromList [
       (stockId (stockData stableStock), return stableStock)
-    , makeStock ("NZSE", "ATM", "A2 Milk") $ semiProjFutureP (mmm 0.15 (-0.1) 0.3, mmm 0.22 0.1 0.25) (0.3, 0.0) [2022 .. 2032] [
+    , makeStock ("NZSE", "ATM", "A2 Milk") $ semiProjFutureP (mmm 0.15 (-0.1) 0.3, mmm 0.22 0.1 0.25) (0.3, 0.0) [2022 .. 2032] $ fys [
          revenue (1200 `minMax95` 1730) `margin` (0.07 `minMax95` 0.22)
        , revGrowth (0.00 `minMax95` 0.3) `margin` (0.10 `minMax95` 0.25)
       ]
-    , makeStock ("NZSE", "FWL", "Foley Wines") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] [
+    , makeStock ("NZSE", "FWL", "Foley Wines") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] $ fys [
          revGrowth ((-0.10) `minMax95`   0.05)  `margin` (0.06 `minMax95` 0.15)
       ] 
-    , makeStock ("ASX", "TWE", "Treasury Wine Estates") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] [
+    , makeStock ("ASX", "TWE", "Treasury Wine Estates") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] $ fys [
        revGrowth ((-0.10) `minMax95`   0.05)  `margin` (0.07 `minMax95` 0.15)
     ]
-    , makeStock ("NZSE", "FPH", "Fisher & Paykel health") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] [
+    , makeStock ("NZSE", "FPH", "Fisher & Paykel health") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] $ fys [
         revGrowth ((-0.50) `minMax95` (-0.10)) `margin` (0.15 `minMax95` 0.30)
       , revGrowth (  0.05  `minMax95`   0.25)  `margin` (0.15 `minMax95` 0.30)
      ]
-    , makeStock ("NZSE", "AIR", "Air New Zealand") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] [
+    , makeStock ("NZSE", "AIR", "Air New Zealand") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] (fys [
     {- from Dec 2018 -} 
     {- to   Dec 2019 = $5867 -}
     
@@ -60,8 +60,8 @@ stocks = Map.fromList [
      , revenue (4600 `minMax95` 6400) `fixedExpenses` meanMinMax95 1000 600 2000 `margin` (0.17 `minMax95` 0.25)
     {- to   Dec 2023   90% - 110% of $5800 -}
      , revGrowth (meanMinMax95 0.03 (-0.02) 0.3) `margin` (0.04 `minMax95` 0.10)                
-    ] . dropLastYear
-    , makeStock ("NZSE", "KMD", "Kathmandu") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] [
+    ]) . dropLastYear
+    , makeStock ("NZSE", "KMD", "Kathmandu") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] $ fys [
         revGrowth (0.07 `minMax95` 0.15) `margin` (0.03 `minMax95` 0.07)
       , revGrowth (0.05 `minMax95` 0.17) `margin` (0.03 `minMax95` 0.10)
     ]
@@ -70,22 +70,29 @@ stocks = Map.fromList [
     -- Likely up to 50% overvalued commercial property $3bln out of $6.9bln valuation (44%)
     -- It's up to $1.5bln to adjust their current equity and 
     -- Online competition
-      makeStock ("ASX", "HVN", "Harvey Norman") $ projFuture (0.3, 0.0) [2021 .. 2031]
+      makeStock ("ASX", "HVN", "Harvey Norman") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] $ 
+        futAdj (meanMinMax95 (-750) (-1500) 0) []
     , makeStock ("NZSE", "HLG", "Hallenstein Glasson Holdings") $ projFuture (0.3, 0.0) [2021 .. 2031]
     , makeStock ("NZSE", "MFT", "Mainfreight") $ projFuture (0.3, 0.0) [2021 .. 2031]
     , makeStock ("NZSE", "SPK", "Spark") $ projFuture (0.3, 0.0) [2021 .. 2031]
     , makeStock ("NZSE", "FBU", "Fletcher Buildings") $ projFuture (0.3, 0.0) [2021 .. 2031]
-    , makeStock ("NZSE", "MEL", "Meredian Energy") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] [
+    , makeStock ("NZSE", "MEL", "Meredian Energy") $ semiProjFuture (0.3, 0.0) [2021 .. 2031]  $ fys [
        revGrowth ((-0.20) `minMax95` 0.22) `margin`  (0.03 `minMax95` 0.12)
      , revGrowth ((-0.20) `minMax95` 0.22) `margin`  (0.03 `minMax95` 0.12)
      , revGrowth ((-0.20) `minMax95` 0.22) `margin`  (0.03 `minMax95` 0.12)
      , revGrowth ((-0.33) `minMax95` 0.09) `margin`  (0.03 `minMax95` 0.12)
      , revGrowth ((-0.20) `minMax95` 0.22) `margin`  (0.03 `minMax95` 0.12)
     ]
-    , makeStock ("ASX", "IAG", "Insurance Australia Group") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] [
+    , makeStock ("ASX", "IAG", "Insurance Australia Group") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] $ fys [
        revGrowth ((-0.20) `minMax95` 0.07) `margin`  ((-0.05) `minMax95` 0.0)
      ] 
   ]
+
+fys :: [FutureYear] -> StockFuture
+fys ys = StockFuture ys (return 0)
+
+futAdj :: Distr -> [FutureYear] -> StockFuture
+futAdj a ys = StockFuture ys a
 
 dropLastYear :: StockData -> StockData
 dropLastYear s = s {stockPast = tail (stockPast s)}
@@ -94,12 +101,9 @@ projFuture :: (Double, Double) -> [Int] -> StockData -> StockFuture
 projFuture decay ys d = projFutureP (pastRevenueGrowth d, pastMargin d) decay ys d
 
 projFutureP :: (MeanMinMax, MeanMinMax) -> (Double, Double) -> [Int] -> StockData -> StockFuture
-projFutureP (pastG, pastM) (gDecay, mDecay) years d =
-  (\(_, g, m) -> revGrowth (meanMinMax95N g) `margin` meanMinMax95N m) <$>
-    yss 
---    trace (show yss) yss
-
+projFutureP (pastG, pastM) (gDecay, mDecay) years d = StockFuture retYears (return 0) 
   where
+    retYears = (\(_, g, m) -> revGrowth (meanMinMax95N g) `margin` meanMinMax95N m) <$> yss 
     yss = go years (pastG, pastM)
     gg = gdpGrowth $ finParams ! (stockIdMarket . stockId) d
 
@@ -115,13 +119,15 @@ projFutureP (pastG, pastM) (gDecay, mDecay) years d =
         m' = MeanMinMax (mmmMean m - md) (mmmMin m - md) (mmmMax m - md)
 
 semiProjFutureP :: (MeanMinMax, MeanMinMax) -> (Double, Double) -> [Int] -> StockFuture -> StockData -> StockFuture
-semiProjFutureP pg dd years fut d = fut ++ drop (length fut) prj
+semiProjFutureP pg dd years fut d = fut{futureYears = ys ++ drop (length ys) (futureYears prj)}
   where
+    ys = futureYears fut
     prj = projFutureP pg dd years d
 
 semiProjFuture :: (Double, Double) -> [Int] -> StockFuture -> StockData -> StockFuture
-semiProjFuture dd years fut d = fut ++ drop (length fut) prj
+semiProjFuture dd years fut d = fut{futureYears = ys ++ drop (length ys) (futureYears prj)}
   where
+    ys = futureYears fut
     prj = projFuture dd years d
 
 
@@ -134,13 +140,13 @@ stock = (!) stocks
 
 -- stock price should be equal to pe ratio if stock growth with inflation rate
 stableStock :: Stock
-stableStock = Stock d [
+stableStock = Stock d (StockFuture [
        revGrowth sre `margin` smr
      , revGrowth sre `margin` smr
      , revGrowth sre `margin` smr
      , revGrowth sre `margin` smr
      , revGrowth sre `margin` smr
-    ]
+    ] (return 0))
    where
     d = StockData {
         stockId = StockId "test" "stable", stockName = "stable"
