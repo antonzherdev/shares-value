@@ -1,22 +1,22 @@
-dividend_dividend_yield,0.05531
+dividend_dividend_yield,0.05416
 dividend_dividend_yield_future,
 dividend_dividend_volatility,
 dividend_dividend_paying_years,10
 dividend_payout_ratio,0.87114
 dividend_payout_ratio_3y,
-dividend_historical_dividend_yield_date,1630108800,1607385600,1569542400,1544486400,1506556800,1474588800,1443571200,1411603200,1383091200,1380153600,1348617600,1316995200,1300924800
-dividend_historical_dividend_yield,0.05531,0.05399,0.09514,0.10026,0.07001,0.09504,0.10269,0.08499,0.10167,0.06844,0.06512,0.07948,0.085
-dividend_historical_dividend_payments_date,1630108800,1607385600,1569542400,1544486400,1506556800,1474588800,1443571200,1411603200,1383091200,1380153600,1348617600,1316995200,1300924800
+dividend_historical_dividend_yield_date,1630281600,1607385600,1569542400,1544486400,1506556800,1474588800,1443571200,1411603200,1383091200,1380153600,1348617600,1316995200,1300924800
+dividend_historical_dividend_yield,0.05416,0.05399,0.09514,0.10026,0.07001,0.09504,0.10269,0.08499,0.10167,0.06844,0.06512,0.07948,0.085
+dividend_historical_dividend_payments_date,1630281600,1607385600,1569542400,1544486400,1506556800,1474588800,1443571200,1411603200,1383091200,1380153600,1348617600,1316995200,1300924800
 dividend_historical_dividend_payments,0.39,0.39,0.44,0.48,0.315,0.3,0.31,0.285,0.335,0.335,0.335,0.31,0.31
 dividend_merged_future_dividends_per_share
 dividend_merged_future_yield
 dividend_upcoming_dividend
-dividend_dividend_yield_growth_annual,-0.01405
+dividend_dividend_yield_growth_annual,-0.01461
 dividend_first_payment,0.31
 dividend_last_payment,0.39
 dividend_industry_analysis
 dividend_buyback_yield,0.00272
-dividend_total_shareholder_yield,0.05803
+dividend_total_shareholder_yield,0.05688
 dividend_payout_ratio_median_3yr,0.90439
 dividend_dividend_payments_growth_annual,0.0745
 dividend_dividend_payments_single_growth_1y,0.20513
@@ -185,12 +185,12 @@ misc_min_price,6.67
 misc_max_price,7.48
 misc_min_price_52w,4.26
 misc_max_price_52w,7.85
-misc_price_spread,0.06099
+misc_price_spread,0.07361
 misc_is_volatile,
 misc_analyst_count,
 misc_is_fund,
 misc_industry_analysis
-misc_days_since_last_trade,1
+misc_days_since_last_trade,0
 misc_shares_outstanding_single_growth_1y,0.00056
 misc_shares_outstanding_single_growth_5y,0.0076
 past_revenue,309.474
@@ -232,7 +232,7 @@ past_net_income_growth_5y,0.16106
 past_revenue_growth_1y,0.04514
 past_revenue_growth_3y,0.04026
 past_revenue_growth_5y,0.0683
-past_days_since_last_update,155
+past_days_since_last_update,157
 past_last_earnings_update,1612137600
 past_last_earnings_update_annual,1596240000
 past_industry_analysis
@@ -276,25 +276,25 @@ past_return_on_capital_employed_ltm_history_offset,0,-1,-2,-3,-4,-5
 past_return_on_capital_employed_ltm_history,0.32585,0.2794,0.57685,0.49575,0.3871,0.36221
 past_latest_fiscal_year,2021
 past_latest_fiscal_quarter,2
-value_pe,13.06721
-value_pb,5.07488
+value_pe,13.34524
+value_pb,5.18285
 value_peg,
 value_beta_5y,1.23008
 value_beta_5y_unlevered,1.08127
-value_intrinsic_discount,0.78969
-value_npv_per_share,33.5218
+value_intrinsic_discount,0.79521
+value_npv_per_share,35.15858
 value_earnings_per_share_growth_1y,0.06048
 value_merged_future_earnings_per_share_date,1596153600,1564531200,1532995200,1501459200
 value_merged_future_earnings_per_share,0.30719,0.30564,0.30702,0.28951
 value_intrinsic_value_model,"2 Stage Free Cash Flow to Equity"
-value_intrinsic_value_unlevered_beta,1.32781
+value_intrinsic_value_unlevered_beta,1.2508
 value_intrinsic_value_de,0.19114
 value_intrinsic_value_tax_rate,0.28
 value_intrinsic_value_equity_premium,0.0472
 value_intrinsic_value_risk_free_rate,0.0214
-value_intrinsic_value_levered_beta_actual,1.34206
-value_intrinsic_value_levered_beta,1.34206
-value_intrinsic_value_cost_of_equity,0.08475
+value_intrinsic_value_levered_beta_actual,1.28336
+value_intrinsic_value_levered_beta,1.28336
+value_intrinsic_value_cost_of_equity,0.08197
 value_intrinsic_value_adr_per_share,1
 value_intrinsic_value_dividend_discount,,,,,,
 value_intrinsic_value_two_stage_fcf_capital_to_revenue_ratio_3yr_avg,-0.04343
@@ -309,77 +309,77 @@ value_intrinsic_value_two_stage_fcf_fcf_count
 value_intrinsic_value_two_stage_fcf_fcf_ltm,57.81054
 value_intrinsic_value_two_stage_fcf_scale,Millions
 value_intrinsic_value_two_stage_fcf_scale_numeric,1000
-value_intrinsic_value_two_stage_fcf_first_stage_2022,75.67277,"Est @ 30.9%",69.76087
-value_intrinsic_value_two_stage_fcf_first_stage_2023,92.52549,"Est @ 22.27%",78.63318
-value_intrinsic_value_two_stage_fcf_first_stage_2024,107.54364,"Est @ 16.23%",84.25611
-value_intrinsic_value_two_stage_fcf_first_stage_2025,120.45312,"Est @ 12%",86.99755
-value_intrinsic_value_two_stage_fcf_first_stage_2026,131.34783,"Est @ 9.04%",87.45488
-value_intrinsic_value_two_stage_fcf_first_stage_2027,140.50715,"Est @ 6.97%",86.24458
-value_intrinsic_value_two_stage_fcf_first_stage_2028,148.26783,"Est @ 5.52%",83.89819
-value_intrinsic_value_two_stage_fcf_first_stage_2029,154.95224,"Est @ 4.51%",80.83059
-value_intrinsic_value_two_stage_fcf_first_stage_2030,160.83707,"Est @ 3.8%",77.34572
-value_intrinsic_value_two_stage_fcf_first_stage_2031,166.14547,"Est @ 3.3%",73.65646
+value_intrinsic_value_two_stage_fcf_first_stage_2022,75.67277,"Est @ 30.9%",69.9395
+value_intrinsic_value_two_stage_fcf_first_stage_2023,92.52549,"Est @ 22.27%",79.0364
+value_intrinsic_value_two_stage_fcf_first_stage_2024,107.54364,"Est @ 16.23%",84.90501
+value_intrinsic_value_two_stage_fcf_first_stage_2025,120.45312,"Est @ 12%",87.89204
+value_intrinsic_value_two_stage_fcf_first_stage_2026,131.34783,"Est @ 9.04%",88.58032
+value_intrinsic_value_two_stage_fcf_first_stage_2027,140.50715,"Est @ 6.97%",87.57813
+value_intrinsic_value_two_stage_fcf_first_stage_2028,148.26783,"Est @ 5.52%",85.41361
+value_intrinsic_value_two_stage_fcf_first_stage_2029,154.95224,"Est @ 4.51%",82.50131
+value_intrinsic_value_two_stage_fcf_first_stage_2030,160.83707,"Est @ 3.8%",79.14656
+value_intrinsic_value_two_stage_fcf_first_stage_2031,166.14547,"Est @ 3.3%",75.5644
 value_intrinsic_value_excess_returns,
 value_intrinsic_value_asset_based,
 value_intrinsic_value_reit,
-value_intrinsic_value_pv_5y,809
-value_intrinsic_value_terminal_value,2678.98427
-value_intrinsic_value_pvtv,1187.66102
-value_intrinsic_value_npv,1996.66102
-value_intrinsic_value_npv_per_share,33.5218
-value_intrinsic_value_intrinsic_discount,0.78969
+value_intrinsic_value_pv_5y,820
+value_intrinsic_value_terminal_value,2801.51357
+value_intrinsic_value_pvtv,1274.15267
+value_intrinsic_value_npv,2094.15267
+value_intrinsic_value_npv_per_share,35.15858
+value_intrinsic_value_intrinsic_discount,0.79521
 value_intrinsic_value_iso,NZ
 value_industry_analysis
 value_market_cap_usd,294102516.45889
 value_market_cap,419919573
 value_market_cap_band,micro2
-value_last_share_price,7.05
-value_price_to_sales,1.35889
+value_last_share_price,7.2
+value_price_to_sales,1.3878
 value_ev_to_sales,1.49869
 value_ev_to_ebitda,8.12414
-value_return_7d,0.04444
-value_return_30d,-0.02219
-value_return_90d,-0.02759
-value_return_1yr_abs,0.56667
-value_return_3yr_abs,0.12083
-value_return_5yr_abs,1.48239
-value_return_1yr_total_return,0.69443
-value_return_3yr_total_return,0.46257
-value_return_5yr_total_return,3.02612
-value_return_since_ipo_abs,7.01136
+value_return_7d,0.07143
+value_return_30d,-0.00415
+value_return_90d,-0.0137
+value_return_1yr_abs,0.5894
+value_return_3yr_abs,0.17455
+value_return_5yr_abs,1.50871
+value_return_1yr_total_return,0.71902
+value_return_3yr_total_return,0.53268
+value_return_5yr_total_return,3.0688
+value_return_since_ipo_abs,7.18182
 value_price_target,0
 value_price_target_low,0
 value_price_target_high,0
 value_price_target_analyst_count,0
-value_market_cap_movement_7d,17868918
-value_market_cap_movement_usd_7d,12515000.70038
-value_market_cap_movement_30d,-9530089.6
-value_market_cap_movement_usd_30d,-6674667.0402
-value_market_cap_movement_90d,-11912612
-value_market_cap_movement_usd_90d,-8343333.80025
-value_market_cap_movement_1y,152035351.5
-value_market_cap_movement_usd_1y,106482246.46309
-value_market_cap_movement_3y,49141049.71
-value_market_cap_movement_usd_3y,34417320.14988
-value_market_cap_movement_5y,252036497.44
-value_market_cap_movement_usd_5y,176520869.47752
+value_market_cap_movement_7d,28590268.8
+value_market_cap_movement_usd_7d,20024001.12061
+value_market_cap_movement_30d,-1786891.8
+value_market_cap_movement_usd_30d,-1251500.07004
+value_market_cap_movement_90d,-5956306
+value_market_cap_movement_usd_90d,-4171666.90013
+value_market_cap_movement_1y,159183915.69
+value_market_cap_movement_usd_1y,111488945.01331
+value_market_cap_movement_3y,67507076.87
+value_market_cap_movement_usd_3y,47280485.27105
+value_market_cap_movement_5y,259197543.67
+value_market_cap_movement_usd_5y,181536310.1765
 industry_averages_industry_id,4440
 industry_averages_country_iso,NZ
-industry_averages_value_score,3.04724
-industry_averages_dividends_score,3.64765
+industry_averages_value_score,3.14842
+industry_averages_dividends_score,3.54647
 industry_averages_future_performance_score,1.6362
 industry_averages_health_score,4.36301
 industry_averages_past_performance_score,3.72771
 industry_averages_total_score,16.4218
 industry_averages_share_price,5.11493
-industry_averages_market_cap,363758056.88429
-industry_averages_intrinsic_discount,-2.41187
+industry_averages_market_cap,365974540.35179
+industry_averages_intrinsic_discount,-2.4679
 industry_averages_analyst_count,3
 industry_averages_pe,16.70352
 industry_averages_pb,2.97098
-industry_averages_peg,1.19376
-industry_averages_future_one_year_growth,0.14445
-industry_averages_future_three_year_growth,0.41008
+industry_averages_peg,1.19015
+industry_averages_future_one_year_growth,0.13685
+industry_averages_future_three_year_growth,0.39831
 industry_averages_future_one_year_roe,
 industry_averages_future_three_year_roe,
 industry_averages_past_one_year_growth,0.15377
@@ -387,7 +387,7 @@ industry_averages_past_five_year_growth,0.06417
 industry_averages_roe,0.14101
 industry_averages_roa,0.08635
 industry_averages_dividend_yield,0.04139
-industry_averages_future_dividend_yield,0.05419
+industry_averages_future_dividend_yield,0.05697
 industry_averages_payout_ratio,
 industry_averages_eps,0.30639
 industry_averages_insider_buying,0.01887
@@ -396,7 +396,7 @@ industry_averages_levered_beta,0.93769
 industry_averages_unlevered_beta,0.73171
 industry_averages_total_base_count,7
 industry_averages_profitable_count,6
-industry_averages_analyst_coverage_count,290
+industry_averages_analyst_coverage_count,291
 industry_averages_dividend_count,6
 industry_averages_beta_count,6
 industry_averages_earnings_per_share_growth_annual,0.14948
@@ -411,44 +411,44 @@ industry_averages_dividend_source,NZ
 industry_averages_beta_source,NZ
 industry_averages_all_industry_id,0
 industry_averages_all_country_iso,NZ
-industry_averages_all_value_score,1.89687
-industry_averages_all_dividends_score,1.57282
-industry_averages_all_future_performance_score,1.71716
-industry_averages_all_health_score,3.53602
-industry_averages_all_past_performance_score,3.38596
-industry_averages_all_total_score,12.10883
-industry_averages_all_share_price,13.87367
-industry_averages_all_market_cap,1085555439.8445
-industry_averages_all_intrinsic_discount,-1.46838
+industry_averages_all_value_score,1.70924
+industry_averages_all_dividends_score,1.55036
+industry_averages_all_future_performance_score,1.77758
+industry_averages_all_health_score,3.59999
+industry_averages_all_past_performance_score,3.22322
+industry_averages_all_total_score,11.86039
+industry_averages_all_share_price,13.8751
+industry_averages_all_market_cap,1091985860.077
+industry_averages_all_intrinsic_discount,-1.4349
 industry_averages_all_analyst_count,6
-industry_averages_all_pe,21.91342
-industry_averages_all_pb,1.79794
-industry_averages_all_peg,1.6492
-industry_averages_all_future_one_year_growth,-0.03347
-industry_averages_all_future_three_year_growth,0.18632
+industry_averages_all_pe,22.30215
+industry_averages_all_pb,1.76365
+industry_averages_all_peg,1.76908
+industry_averages_all_future_one_year_growth,0.00227
+industry_averages_all_future_three_year_growth,0.19653
 industry_averages_all_future_one_year_roe,
 industry_averages_all_future_three_year_roe,
-industry_averages_all_past_one_year_growth,0.18159
-industry_averages_all_past_five_year_growth,0.06588
-industry_averages_all_roe,0.09494
-industry_averages_all_roa,0.05935
-industry_averages_all_dividend_yield,0.02962
-industry_averages_all_future_dividend_yield,0.03018
+industry_averages_all_past_one_year_growth,0.17041
+industry_averages_all_past_five_year_growth,0.07581
+industry_averages_all_roe,0.09456
+industry_averages_all_roa,0.05677
+industry_averages_all_dividend_yield,0.02932
+industry_averages_all_future_dividend_yield,0.03029
 industry_averages_all_payout_ratio,
-industry_averages_all_eps,0.48987
-industry_averages_all_insider_buying,0.38821
-industry_averages_all_debt_equity,0.47217
-industry_averages_all_levered_beta,0.7293
-industry_averages_all_unlevered_beta,0.60565
+industry_averages_all_eps,0.47954
+industry_averages_all_insider_buying,0.38264
+industry_averages_all_debt_equity,0.47024
+industry_averages_all_levered_beta,0.72931
+industry_averages_all_unlevered_beta,0.60588
 industry_averages_all_total_base_count,120
 industry_averages_all_profitable_count,89
 industry_averages_all_analyst_coverage_count,71
-industry_averages_all_dividend_count,64
+industry_averages_all_dividend_count,65
 industry_averages_all_beta_count,93
-industry_averages_all_earnings_per_share_growth_annual,0.06762
-industry_averages_all_net_income_growth_annual,0.07353
-industry_averages_all_cash_ops_growth_annual,0.097
-industry_averages_all_revenue_growth_annual,0.04837
+industry_averages_all_earnings_per_share_growth_annual,0.07585
+industry_averages_all_net_income_growth_annual,0.0791
+industry_averages_all_cash_ops_growth_annual,0.09708
+industry_averages_all_revenue_growth_annual,0.04831
 industry_averages_all_levered_beta_median,0.76487
 market_cap_listing,419919573
 market_cap_primary,419919573
@@ -497,9 +497,9 @@ insider_trading_2_buy_total_individual_shares,95000
 insider_trading_2_buy_total_company_shares,0
 insider_trading_2_buy_company_names
 insider_trading_2_buy_individual_names_offset,0,1,2
-insider_trading_2_buy_individual_names,"James Glasson","Stuart Duncan","Jason Barrow"
+insider_trading_2_buy_individual_names,"Stuart Duncan","Jason Barrow","James Glasson"
 insider_trading_2_buy_individual_ids_offset,0,1,2
-insider_trading_2_buy_individual_ids,409067075,555936085,374268544
+insider_trading_2_buy_individual_ids,555936085,374268544,409067075
 insider_trading_2_buy_total_trades,3
 insider_trading_2_buy_unique_owners,3
 insider_trading_2_buy_total_trans_value,693500.02037
@@ -551,9 +551,9 @@ insider_trading_4_buy_total_individual_shares,92000
 insider_trading_4_buy_total_company_shares,0
 insider_trading_4_buy_company_names
 insider_trading_4_buy_individual_names_offset,0,1,2
-insider_trading_4_buy_individual_names,"James Glasson","Stuart Duncan","April Ward"
+insider_trading_4_buy_individual_names,"April Ward","Stuart Duncan","James Glasson"
 insider_trading_4_buy_individual_ids_offset,0,1,2
-insider_trading_4_buy_individual_ids,409067075,555936085,695979882
+insider_trading_4_buy_individual_ids,695979882,555936085,409067075
 insider_trading_4_buy_total_trades,3
 insider_trading_4_buy_unique_owners,3
 insider_trading_4_buy_total_trans_value,577009.97504

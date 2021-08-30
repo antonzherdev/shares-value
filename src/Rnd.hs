@@ -1,7 +1,7 @@
 module Rnd (Distr, Rnd, minMax95, minMax99, meanMinMax95, meanMinMax99,
   (|*|), (|+|), runRnd, simulate, mkN95, distrN, distrAsymN, distrConst,
   simulateN, simulateMmm, MeanMinMax(..), scanM, withConfidence, mkMeanMinMax, showD, 
-  mmmProbability95AtLeast, meanMinMax95N) where
+  mmmProbability95AtLeast, meanMinMax95N, mmm) where
 
 import Statistics.Distribution.Normal
 import Statistics.Distribution
@@ -33,6 +33,9 @@ data MeanMinMax = MeanMinMax {
   mmmMin :: Double,
   mmmMax :: Double
 }
+
+mmm :: Double -> Double -> Double -> MeanMinMax
+mmm = MeanMinMax
 
 instance Show MeanMinMax where
     show (MeanMinMax m pMin pMax) = showD 2 m ++ " (" ++ showD 2 pMin ++ " .. " ++ showD 2 pMax ++ ")"

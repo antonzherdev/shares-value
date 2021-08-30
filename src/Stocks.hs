@@ -27,10 +27,9 @@ finParams = Map.fromList $ (\p -> (paramMarket p, p)) <$> [
 stocks :: Map StockId (IO Stock)
 stocks = Map.fromList [
       (stockId (stockData stableStock), return stableStock)
-    , makeStock ("NZSE", "ATM", "A2 Milk") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] [
-         revGrowth ((-0.50) `minMax95` (-0.22)) `margin` (0.0 `minMax95` 0.12)
-       , revGrowth (meanMinMax95 0.20 0.0 0.60) `margin` (0.05 `minMax95` 0.20)
-       , revGrowth (  0.10  `minMax95`   0.25)  `margin` (0.10 `minMax95` 0.25)
+    , makeStock ("NZSE", "ATM", "A2 Milk") $ semiProjFutureP (mmm 0.15 (-0.1) 0.3, mmm 0.22 0.1 0.25) (0.3, 0.0) [2022 .. 2032] [
+         revenue (1200 `minMax95` 1730) `margin` (0.07 `minMax95` 0.22)
+       , revGrowth (0.00 `minMax95` 0.3) `margin` (0.10 `minMax95` 0.25)
       ]
     , makeStock ("NZSE", "FWL", "Foley Wines") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] [
          revGrowth ((-0.10) `minMax95`   0.05)  `margin` (0.06 `minMax95` 0.15)
@@ -66,7 +65,12 @@ stocks = Map.fromList [
         revGrowth (0.07 `minMax95` 0.15) `margin` (0.03 `minMax95` 0.07)
       , revGrowth (0.05 `minMax95` 0.17) `margin` (0.03 `minMax95` 0.10)
     ]
-    , makeStock ("ASX", "HVN", "Harvey Norman") $ projFuture (0.3, 0.0) [2021 .. 2031]
+    
+    ,
+    -- Likely up to 50% overvalued commercial property $3bln out of $6.9bln valuation (44%)
+    -- It's up to $1.5bln to adjust their current equity and 
+    -- Online competition
+      makeStock ("ASX", "HVN", "Harvey Norman") $ projFuture (0.3, 0.0) [2021 .. 2031]
     , makeStock ("NZSE", "HLG", "Hallenstein Glasson Holdings") $ projFuture (0.3, 0.0) [2021 .. 2031]
     , makeStock ("NZSE", "MFT", "Mainfreight") $ projFuture (0.3, 0.0) [2021 .. 2031]
     , makeStock ("NZSE", "SPK", "Spark") $ projFuture (0.3, 0.0) [2021 .. 2031]
@@ -87,13 +91,16 @@ dropLastYear :: StockData -> StockData
 dropLastYear s = s {stockPast = tail (stockPast s)}
 
 projFuture :: (Double, Double) -> [Int] -> StockData -> StockFuture
-projFuture (gDecay, mDecay) years d =
+projFuture decay ys d = projFutureP (pastRevenueGrowth d, pastMargin d) decay ys d
+
+projFutureP :: (MeanMinMax, MeanMinMax) -> (Double, Double) -> [Int] -> StockData -> StockFuture
+projFutureP (pastG, pastM) (gDecay, mDecay) years d =
   (\(_, g, m) -> revGrowth (meanMinMax95N g) `margin` meanMinMax95N m) <$>
     yss 
 --    trace (show yss) yss
 
   where
-    yss = go years (pastRevenueGrowth d, pastMargin d)
+    yss = go years (pastG, pastM)
     gg = gdpGrowth $ finParams ! (stockIdMarket . stockId) d
 
     go :: [Int] -> (MeanMinMax, MeanMinMax) -> [(Int, MeanMinMax, MeanMinMax)]
@@ -106,6 +113,11 @@ projFuture (gDecay, mDecay) years d =
           MeanMinMax (mmmMean g - gd) (mmmMin g - gd) (mmmMax g - gd)
         md = mDecay * mmmMean m
         m' = MeanMinMax (mmmMean m - md) (mmmMin m - md) (mmmMax m - md)
+
+semiProjFutureP :: (MeanMinMax, MeanMinMax) -> (Double, Double) -> [Int] -> StockFuture -> StockData -> StockFuture
+semiProjFutureP pg dd years fut d = fut ++ drop (length fut) prj
+  where
+    prj = projFutureP pg dd years d
 
 semiProjFuture :: (Double, Double) -> [Int] -> StockFuture -> StockData -> StockFuture
 semiProjFuture dd years fut d = fut ++ drop (length fut) prj
