@@ -32,7 +32,7 @@ procStock s =  do
   putStrLn $ "Growth   = " ++ show (pastRevenueGrowth d |*| 100) ++ " [" ++ unwords (showD 2 . (100 *) <$> pastRevenueGrowths d) ++ "]"
   putStrLn $ "Earnings = " ++ unwords (showD 2 . pastYearEarnings <$> stockPast d)
   putStrLn $ "Margin   = " ++ show (pastMargin d |*| 100) ++ " [" ++ unwords (showD 2 . (100 *) . pastYearMargin  <$> stockPast d) ++ "]"
-  _ <- foldlM printYear 2021 $ zip prevRevs yss
+  _ <- foldlM printYear (futureStartYear (stockFuture s)) $ zip prevRevs yss
   putStrLn "---------------------------------------------------------"
   putStrLn $ stockIdSymbol sId ++ ": " ++ stockName d
   putStrLn $ "Intrinsic cap  [$M] = " ++ show (snd sm)

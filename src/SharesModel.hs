@@ -71,6 +71,7 @@ stockEarnings :: StockData -> Double
 stockEarnings = pastYearEarnings . head . stockPast
 
 data StockFuture = StockFuture {
+  futureStartYear :: Int,
   futureYears :: [FutureYear],
   futureAssetsAdjustment :: Distr
 }

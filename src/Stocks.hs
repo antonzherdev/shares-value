@@ -41,24 +41,21 @@ stocks = Map.fromList [
         revGrowth ((-0.50) `minMax95` (-0.10)) `margin` (0.15 `minMax95` 0.30)
       , revGrowth (  0.05  `minMax95`   0.25)  `margin` (0.15 `minMax95` 0.30)
      ]
-    , makeStock ("NZSE", "AIR", "Air New Zealand") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] (fys [
-    {- from Dec 2018 -} 
-    {- to   Dec 2019 = $5867 -}
+    , makeStock ("NZSE", "AIR", "Air New Zealand") $ semiProjFutureP (mmm 0.03 0.02 0.05, mmm 0.07 0.045 0.09) (0.3, 0.0) [2022 .. 2032] (fys [
+    {- from Jun 2018 -} 
+    {- to   Jun 2019 = $5785.48 -}  
+    {- from Jun 2019 -}  
+    {- to   Jun 2020 = $4835.00 -}
+    {- from Jun 2020 -} 
+    {- to   Jun 2021 = 2514.00 -}
     
-    {- from Dec 2019 -}  
-    {- to   Dec 2020 = $3055 -}
+    {- from Jun 2021   40% - 50% of $5800 -}
+    revenue (3200 `minMax95` 4350) `fixedExpenses` meanMinMax95 800 600 1200 `margin` (0.15 `minMax95` 0.22)
+    {- to   Jun 2022   70% - 100% of $5800 -}
     
-    {- from Dec 2020 -}  {- through Jun 2021 $2400 - $2600-}
-       revenue (2400 `minMax95` 3000) `fixedExpenses` meanMinMax95 950 600 1600 `margin` (0.1 `minMax95` 0.2)
-    {- to   Dec 2021 -}
-    
-    {- from Dec 2021   40% - 50% of $5800 -}
-     , revenue (3200 `minMax95` 4350) `fixedExpenses` meanMinMax95 1000 600 2000 `margin` (0.15 `minMax95` 0.22)
-    {- to   Dec 2022   70% - 100% of $5800 -}
-    
-    {- from Dec 2022   70% - 110% of $5800 -}
-     , revenue (4600 `minMax95` 6400) `fixedExpenses` meanMinMax95 1000 600 2000 `margin` (0.17 `minMax95` 0.25)
-    {- to   Dec 2023   90% - 110% of $5800 -}
+    {- from Jun 2022   70% - 110% of $5800 -}
+     , revenue (4600 `minMax95` 6400) `fixedExpenses` meanMinMax95 800 600 1200 `margin` (0.17 `minMax95` 0.25)
+    {- to   Jun 2023   90% - 110% of $5800 -}
      , revGrowth (meanMinMax95 0.03 (-0.02) 0.3) `margin` (0.04 `minMax95` 0.10)                
     ]) . dropLastYear
     , makeStock ("NZSE", "KMD", "Kathmandu") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] $ fys [
@@ -89,10 +86,10 @@ stocks = Map.fromList [
   ]
 
 fys :: [FutureYear] -> StockFuture
-fys ys = StockFuture ys (return 0)
+fys ys = StockFuture 0 ys (return 0)
 
 futAdj :: Distr -> [FutureYear] -> StockFuture
-futAdj a ys = StockFuture ys a
+futAdj a ys = StockFuture 0 ys a
 
 dropLastYear :: StockData -> StockData
 dropLastYear s = s {stockPast = tail (stockPast s)}
@@ -101,7 +98,7 @@ projFuture :: (Double, Double) -> [Int] -> StockData -> StockFuture
 projFuture decay ys d = projFutureP (pastRevenueGrowth d, pastMargin d) decay ys d
 
 projFutureP :: (MeanMinMax, MeanMinMax) -> (Double, Double) -> [Int] -> StockData -> StockFuture
-projFutureP (pastG, pastM) (gDecay, mDecay) years d = StockFuture retYears (return 0) 
+projFutureP (pastG, pastM) (gDecay, mDecay) years d = StockFuture (head years) retYears (return 0) 
   where
     retYears = (\(_, g, m) -> revGrowth (meanMinMax95N g) `margin` meanMinMax95N m) <$> yss 
     yss = go years (pastG, pastM)
@@ -119,7 +116,10 @@ projFutureP (pastG, pastM) (gDecay, mDecay) years d = StockFuture retYears (retu
         m' = MeanMinMax (mmmMean m - md) (mmmMin m - md) (mmmMax m - md)
 
 semiProjFutureP :: (MeanMinMax, MeanMinMax) -> (Double, Double) -> [Int] -> StockFuture -> StockData -> StockFuture
-semiProjFutureP pg dd years fut d = fut{futureYears = ys ++ drop (length ys) (futureYears prj)}
+semiProjFutureP pg dd years fut d = fut{
+    futureStartYear = head years, 
+    futureYears = ys ++ drop (length ys) (futureYears prj)
+  }
   where
     ys = futureYears fut
     prj = projFutureP pg dd years d
@@ -140,7 +140,7 @@ stock = (!) stocks
 
 -- stock price should be equal to pe ratio if stock growth with inflation rate
 stableStock :: Stock
-stableStock = Stock d (StockFuture [
+stableStock = Stock d (StockFuture 2022 [
        revGrowth sre `margin` smr
      , revGrowth sre `margin` smr
      , revGrowth sre `margin` smr
