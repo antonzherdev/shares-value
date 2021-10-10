@@ -31,9 +31,7 @@ stocks = Map.fromList [
          revenue (1200 `minMax95` 1730) `margin` (0.07 `minMax95` 0.22)
        , revGrowth (0.00 `minMax95` 0.3) `margin` (0.10 `minMax95` 0.25)
       ]
-    , makeStock ("NZSE", "FWL", "Foley Wines") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] $ fys [
-         revGrowth ((-0.10) `minMax95`   0.05)  `margin` (0.06 `minMax95` 0.15)
-      ] 
+    , makeStock ("NZSE", "FWL", "Foley Wines") $ projFuture (0.3, 0.0) [2022 .. 2032] 
     , makeStock ("ASX", "TWE", "Treasury Wine Estates") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] $ fys [
        revGrowth ((-0.10) `minMax95`   0.05)  `margin` (0.07 `minMax95` 0.15)
     ]
@@ -58,18 +56,17 @@ stocks = Map.fromList [
     {- to   Jun 2023   90% - 110% of $5800 -}
      , revGrowth (meanMinMax95 0.03 (-0.02) 0.3) `margin` (0.04 `minMax95` 0.10)                
     ]) . dropLastYear
-    , makeStock ("NZSE", "KMD", "Kathmandu") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] $ fys [
-        revGrowth (0.07 `minMax95` 0.15) `margin` (0.03 `minMax95` 0.07)
-      , revGrowth (0.05 `minMax95` 0.17) `margin` (0.03 `minMax95` 0.10)
+    , makeStock ("NZSE", "KMD", "Kathmandu") $ semiProjFuture (0.3, 0.0) [2022 .. 2032] $ fys [
+        revGrowth (0.05 `minMax95` 0.17) `margin` (0.03 `minMax95` 0.10)
     ]
     
     ,
     -- Likely up to 50% overvalued commercial property $3bln out of $6.9bln valuation (44%)
     -- It's up to $1.5bln to adjust their current equity and 
     -- Online competition
-      makeStock ("ASX", "HVN", "Harvey Norman") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] $ 
+      makeStock ("ASX", "HVN", "Harvey Norman") $ semiProjFuture (0.3, 0.0) [2022 .. 2032] $ 
         futAdj (meanMinMax95 (-750) (-1500) 0) []
-    , makeStock ("NZSE", "HLG", "Hallenstein Glasson Holdings") $ projFuture (0.3, 0.0) [2021 .. 2031]
+    , makeStock ("NZSE", "HLG", "Hallenstein Glasson Holdings") $ projFuture (0.3, 0.0) [2022 .. 2032]
     , makeStock ("NZSE", "MFT", "Mainfreight") $ projFuture (0.3, 0.0) [2021 .. 2031]
     , makeStock ("NZSE", "SPK", "Spark") $ projFuture (0.3, 0.0) [2021 .. 2031]
     , makeStock ("NZSE", "FBU", "Fletcher Buildings") $ projFuture (0.3, 0.0) [2021 .. 2031]
