@@ -79,7 +79,9 @@ stocks = Map.fromList [
     ]
     , makeStock ("ASX", "IAG", "Insurance Australia Group") $ semiProjFuture (0.3, 0.0) [2021 .. 2031] $ fys [
        revGrowth ((-0.20) `minMax95` 0.07) `margin`  ((-0.05) `minMax95` 0.0)
-     ] 
+     ] ,
+     makeStock ("ASX", "RRL", "Regis Resources") $ projFuture (0.3, 0.0) [2022 .. 2032],
+     makeStock ("ASX", "APX", "Appen") $ projFuture (0.3, 0.0) [2022 .. 2032]
   ]
 
 fys :: [FutureYear] -> StockFuture
